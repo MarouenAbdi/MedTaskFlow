@@ -129,30 +129,35 @@ export function Pricing() {
             const Icon = getIconComponent(plan.iconType);
             
             return (
-              <Card key={plan.name} className="relative flex flex-col p-6">
+              <Card 
+                key={plan.name} 
+                className="relative flex flex-col p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 group"
+              >
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
-                    <h3 className="font-semibold text-xl">{plan.name}</h3>
+                    <h3 className="font-semibold text-xl transition-colors duration-300 group-hover:text-primary">
+                      {plan.name}
+                    </h3>
                     <div>
                       <span className="text-3xl font-bold">{plan.price}</span>
                       <span className="text-muted-foreground ml-1">/month</span>
                     </div>
                   </div>
-                  <div className="p-2 bg-primary/10 rounded-lg">
+                  <div className="p-2 bg-primary/10 rounded-lg transition-transform duration-300 group-hover:scale-110">
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
                 </div>
 
                 <div className="mt-6 space-y-4">
                   <Button 
-                    className="w-full"
+                    className="w-full transition-transform duration-300 group-hover:scale-105"
                     onClick={() => handlePlanSelect(plan)}
                   >
                     Get Started
                   </Button>
                   <ul className="space-y-2.5">
                     {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2">
+                      <li key={i} className="flex items-center gap-2 transition-transform duration-200 hover:translate-x-1">
                         <Check className="h-4 w-4 text-primary flex-shrink-0" />
                         <span className="text-muted-foreground">{feature}</span>
                       </li>

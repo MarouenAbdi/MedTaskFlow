@@ -11,9 +11,17 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { NewPatientDialog } from '@/components/modals/new-patient-dialog';
 import { PatientDetailsDialog } from '@/components/modals/patient-details-dialog';
 import { User } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Dummy patient data with a mix of profile pictures and default avatars
 const initialPatients = [
@@ -98,6 +106,17 @@ export function Patients() {
     setDetailsOpen(true);
   };
 
+  const handleStatusChange = (newStatus: string, patientId: number) => {
+    setPatients(prevPatients =>
+      prevPatients.map(patient =>
+        patient.id === patientId
+          ? { ...patient, status: newStatus }
+          : patient
+      )
+    );
+    toast.success(`Patient status updated to ${newStatus}`);
+  };
+
   const handleSavePatient = (updatedPatient: typeof patients[0]) => {
     setPatients(prevPatients =>
       prevPatients.map(patient =>
@@ -127,10 +146,12 @@ export function Patients() {
             {patients.map((patient) => (
               <TableRow 
                 key={patient.id}
-                className="cursor-pointer hover:bg-accent/50 transition-colors"
-                onClick={() => handleRowClick(patient)}
+                className="cursor-pointer group"
               >
-                <TableCell>
+                <TableCell 
+                  className="font-medium"
+                  onClick={() => handleRowClick(patient)}
+                >
                   <div className="flex items-center gap-3">
                     <Avatar>
                       {patient.avatar ? (
@@ -141,16 +162,45 @@ export function Patients() {
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    <span className="font-medium">{patient.name}</span>
+                    <span className="group-hover:text-primary transition-colors">
+                      {patient.name}
+                    </span>
                   </div>
                 </TableCell>
-                <TableCell>{patient.age}</TableCell>
-                <TableCell>{patient.contact}</TableCell>
-                <TableCell>{patient.lastVisit}</TableCell>
-                <TableCell>
-                  <Badge variant={patient.status === 'active' ? 'default' : 'secondary'}>
-                    {t(`patients.status${patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}`)}
-                  </Badge>
+                <TableCell onClick={() => handleRowClick(patient)}>
+                  {patient.age}
+                </TableCell>
+                <TableCell onClick={() => handleRowClick(patient)}>
+                  {patient.contact}
+                </TableCell>
+                <TableCell onClick={() => handleRowClick(patient)}>
+                  {patient.lastVisit}
+                </TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
+                  <Select
+                    value={patient.status}
+                    onValueChange={(value) => handleStatusChange(value, patient.id)}
+                  >
+                    <SelectTrigger className="w-[130px]">
+                      <SelectValue>
+                        <Badge variant={patient.status === 'active' ? 'default' : 'secondary'}>
+                          {t(`patients.status${patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}`)}
+                        </Badge>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">
+                        <Badge variant="default">
+                          {t('patients.statusActive')}
+                        </Badge>
+                      </SelectItem>
+                      <SelectItem value="inactive">
+                        <Badge variant="secondary">
+                          {t('patients.statusInactive')}
+                        </Badge>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
               </TableRow>
             ))}

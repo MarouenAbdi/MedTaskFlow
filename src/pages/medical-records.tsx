@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,9 +12,127 @@ import {
 } from '@/components/ui/table';
 import { Search } from 'lucide-react';
 import { NewMedicalRecordDialog } from '@/components/modals/new-medical-record-dialog';
+import { MedicalRecordDetailsDialog } from '@/components/modals/medical-record-details-dialog';
+import { Badge } from '@/components/ui/badge';
+
+// Sample medical records data
+const initialRecords = [
+  {
+    id: 1,
+    patient: "John Doe",
+    date: "2024-03-15",
+    type: "checkup",
+    doctor: "Dr. Smith",
+    status: "completed",
+    symptoms: "<p>Patient reports persistent headaches and fatigue.</p>",
+    diagnosis: "<p>Tension headaches due to stress. Blood pressure slightly elevated.</p>",
+    treatment: "<p>Prescribed Ibuprofen 400mg PRN for headaches. Recommended stress management techniques and regular exercise.</p>",
+    notes: "<p>Follow-up in 2 weeks to monitor blood pressure.</p>",
+    vitals: {
+      bloodPressure: "130/85",
+      heartRate: "78",
+      temperature: "37.2",
+      weight: "75",
+      height: "180"
+    },
+    attachments: [
+      {
+        name: "blood_test_results.pdf",
+        type: "pdf",
+        size: "1.2 MB"
+      },
+      {
+        name: "chest_xray.jpg",
+        type: "image",
+        size: "2.5 MB"
+      }
+    ]
+  },
+  {
+    id: 2,
+    patient: "Sarah Johnson",
+    date: "2024-03-14",
+    type: "followup",
+    doctor: "Dr. Chen",
+    status: "pending",
+    symptoms: "<p>Post-surgery follow-up. Patient reports mild discomfort at incision site.</p>",
+    diagnosis: "<p>Normal post-operative healing. No signs of infection.</p>",
+    treatment: "<p>Continue current medication regimen. Wound care instructions provided.</p>",
+    notes: "<p>Recovery progressing as expected. Next follow-up in 1 week.</p>",
+    vitals: {
+      bloodPressure: "120/80",
+      heartRate: "72",
+      temperature: "36.8",
+      weight: "65",
+      height: "165"
+    },
+    attachments: [
+      {
+        name: "surgical_notes.pdf",
+        type: "pdf",
+        size: "0.8 MB"
+      }
+    ]
+  },
+  {
+    id: 3,
+    patient: "Michael Chen",
+    date: "2024-03-13",
+    type: "emergency",
+    doctor: "Dr. Rodriguez",
+    status: "completed",
+    symptoms: "<p>Severe chest pain and shortness of breath. Patient reports onset during exercise.</p>",
+    diagnosis: "<p>Acute anxiety attack. ECG normal. No signs of cardiac issues.</p>",
+    treatment: "<p>Administered anxiolytic medication. Breathing exercises demonstrated.</p>",
+    notes: "<p>Referred to psychiatrist for anxiety management.</p>",
+    vitals: {
+      bloodPressure: "140/90",
+      heartRate: "95",
+      temperature: "37.0",
+      weight: "80",
+      height: "175"
+    },
+    attachments: [
+      {
+        name: "ecg_results.pdf",
+        type: "pdf",
+        size: "1.5 MB"
+      }
+    ]
+  }
+];
+
+const statusColors = {
+  completed: "success",
+  pending: "warning",
+  cancelled: "destructive"
+} as const;
+
+const typeColors = {
+  checkup: "default",
+  followup: "secondary",
+  emergency: "destructive",
+  consultation: "primary"
+} as const;
 
 export function MedicalRecords() {
   const { t } = useTranslation();
+  const [records, setRecords] = useState(initialRecords);
+  const [selectedRecord, setSelectedRecord] = useState<typeof records[0] | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  const handleRowClick = (record: typeof records[0]) => {
+    setSelectedRecord(record);
+    setDetailsOpen(true);
+  };
+
+  const handleSaveRecord = (updatedRecord: typeof records[0]) => {
+    setRecords(prevRecords =>
+      prevRecords.map(record =>
+        record.id === updatedRecord.id ? updatedRecord : record
+      )
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -37,20 +156,53 @@ export function MedicalRecords() {
               <TableHead>{t('medicalRecords.date')}</TableHead>
               <TableHead>{t('medicalRecords.type')}</TableHead>
               <TableHead>{t('medicalRecords.doctor')}</TableHead>
+              <TableHead>Vitals</TableHead>
               <TableHead>{t('medicalRecords.status')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">John Doe</TableCell>
-              <TableCell>March 15, 2024</TableCell>
-              <TableCell>{t('medicalRecords.typeCheckup')}</TableCell>
-              <TableCell>Dr. Smith</TableCell>
-              <TableCell>{t('medicalRecords.statusCompleted')}</TableCell>
-            </TableRow>
+            {records.map((record) => (
+              <TableRow 
+                key={record.id}
+                className="cursor-pointer group hover:bg-accent/50 transition-colors"
+                onClick={() => handleRowClick(record)}
+              >
+                <TableCell className="font-medium group-hover:text-primary transition-colors">
+                  {record.patient}
+                </TableCell>
+                <TableCell>{record.date}</TableCell>
+                <TableCell>
+                  <Badge variant={typeColors[record.type as keyof typeof typeColors]}>
+                    {t(`medicalRecords.type${record.type.charAt(0).toUpperCase() + record.type.slice(1)}`)}
+                  </Badge>
+                </TableCell>
+                <TableCell>{record.doctor}</TableCell>
+                <TableCell>
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">BP:</span> {record.vitals.bloodPressure}
+                    <span className="mx-2">|</span>
+                    <span className="text-muted-foreground">HR:</span> {record.vitals.heartRate}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={statusColors[record.status as keyof typeof statusColors]}>
+                    {t(`medicalRecords.status${record.status.charAt(0).toUpperCase() + record.status.slice(1)}`)}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>
+
+      {selectedRecord && (
+        <MedicalRecordDetailsDialog
+          record={selectedRecord}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+          onSave={handleSaveRecord}
+        />
+      )}
     </div>
   );
 }

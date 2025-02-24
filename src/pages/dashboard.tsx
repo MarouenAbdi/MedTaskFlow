@@ -46,14 +46,20 @@ const pieChartData = [
 ];
 
 const COLORS = {
-  blue: '#3b82f6',
-  indigo: '#6366f1',
-  purple: '#8b5cf6',
-  pink: '#ec4899',
-  orange: '#f97316',
-  green: '#22c55e',
-  teal: '#14b8a6',
-  red: '#ef4444',
+  // Primary blues
+  blue: {
+    light: '#60A5FA', // blue-400
+    DEFAULT: '#3B82F6', // blue-500
+    dark: '#2563EB', // blue-600
+  },
+  // Neutral greys
+  grey: {
+    lightest: '#F3F4F6', // gray-100
+    light: '#D1D5DB', // gray-300
+    DEFAULT: '#9CA3AF', // gray-400
+    dark: '#4B5563', // gray-600
+    darkest: '#1F2937', // gray-800
+  }
 };
 
 const chartConfig = {
@@ -92,12 +98,12 @@ function AreaChartComponent() {
       <AreaChart data={areaChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
         <defs>
           <linearGradient id="patients" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={COLORS.blue} stopOpacity={0.8}/>
-            <stop offset="95%" stopColor={COLORS.blue} stopOpacity={0}/>
+            <stop offset="5%" stopColor={COLORS.blue.DEFAULT} stopOpacity={0.2}/>
+            <stop offset="95%" stopColor={COLORS.blue.DEFAULT} stopOpacity={0}/>
           </linearGradient>
           <linearGradient id="appointments" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={COLORS.purple} stopOpacity={0.8}/>
-            <stop offset="95%" stopColor={COLORS.purple} stopOpacity={0}/>
+            <stop offset="5%" stopColor={COLORS.grey.DEFAULT} stopOpacity={0.2}/>
+            <stop offset="95%" stopColor={COLORS.grey.DEFAULT} stopOpacity={0}/>
           </linearGradient>
         </defs>
         <CartesianGrid {...chartConfig.cartesianGrid} />
@@ -107,7 +113,7 @@ function AreaChartComponent() {
         <Area 
           type="monotone" 
           dataKey="patients" 
-          stroke={COLORS.blue} 
+          stroke={COLORS.blue.DEFAULT} 
           fillOpacity={1} 
           fill="url(#patients)" 
           strokeWidth={2}
@@ -116,7 +122,7 @@ function AreaChartComponent() {
         <Area 
           type="monotone" 
           dataKey="appointments" 
-          stroke={COLORS.purple} 
+          stroke={COLORS.grey.DEFAULT} 
           fillOpacity={1} 
           fill="url(#appointments)" 
           strokeWidth={2}
@@ -139,13 +145,13 @@ function BarChartComponent() {
         <Legend />
         <Bar 
           dataKey="new" 
-          fill={COLORS.teal} 
+          fill={COLORS.blue.light} 
           name="New Patients" 
           radius={[4, 4, 0, 0]}
         />
         <Bar 
           dataKey="returning" 
-          fill={COLORS.pink} 
+          fill={COLORS.blue.dark} 
           name="Returning Patients" 
           radius={[4, 4, 0, 0]}
         />
@@ -155,6 +161,13 @@ function BarChartComponent() {
 }
 
 function PieChartComponent() {
+  const pieColors = [
+    COLORS.blue.DEFAULT,
+    COLORS.grey.light,
+    COLORS.blue.light,
+    COLORS.grey.DEFAULT
+  ];
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
@@ -170,7 +183,7 @@ function PieChartComponent() {
           {pieChartData.map((_, index) => (
             <Cell 
               key={`cell-${index}`} 
-              fill={Object.values(COLORS)[index % Object.values(COLORS).length]}
+              fill={pieColors[index % pieColors.length]}
             />
           ))}
         </Pie>

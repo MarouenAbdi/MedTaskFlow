@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useRef, useCallback, useEffect } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import {
@@ -15,7 +17,7 @@ import {
   Timer,
   HeartPulse,
   Smile,
-  Sparkles
+  Sparkles,
 } from "lucide-react";
 
 const features = [
@@ -103,16 +105,103 @@ const testimonials = [
     role: "Cardiologist",
     image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=300&h=300&fit=crop",
     location: "Heart Care Institute"
+  },
+  {
+    quote: "A transformação que o MedTaskFlow trouxe para nossa clínica é impressionante. Recomendo fortemente!",
+    author: "Dra. Beatriz Santos",
+    role: "Clínica Geral",
+    image: "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?w=300&h=300&fit=crop",
+    location: "Centro Médico São Paulo"
+  },
+  {
+    quote: "Finalmente um sistema que entende as necessidades dos profissionais de saúde brasileiros.",
+    author: "Dr. João Costa",
+    role: "Ortopedista",
+    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&h=300&fit=crop",
+    location: "Hospital Português, Salvador"
+  },
+  {
+    quote: "Uma ferramenta indispensável para qualquer consultório moderno. Simplesmente excelente!",
+    author: "Dra. Mariana Oliveira",
+    role: "Dermatologista",
+    image: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=300&h=300&fit=crop",
+    location: "Clínica Dermatológica Lisboa"
   }
 ];
+
+function TestimonialsCarousel() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    loop: true,
+    skipSnaps: false,
+    dragFree: true,
+    containScroll: "trimSnaps",
+  });
+
+  const autoplay = useCallback(() => {
+    if (!emblaApi) return;
+
+    const autoplayInterval = setInterval(() => {
+      if (!emblaApi.canScrollNext()) {
+        emblaApi.scrollTo(0);
+      } else {
+        emblaApi.scrollNext();
+      }
+    }, 4000);
+
+    return () => clearInterval(autoplayInterval);
+  }, [emblaApi]);
+
+  useEffect(() => {
+    const cleanup = autoplay();
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [autoplay]);
+
+  return (
+    <div className="relative">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-6">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_33.33%] p-2"
+            >
+              <div className="h-full flex flex-col items-center space-y-4 text-center rounded-lg bg-gray-50 p-6 dark:bg-gray-900/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:bg-white dark:hover:bg-gray-800">
+                <img
+                  alt={testimonial.author}
+                  className="h-16 w-16 rounded-full object-cover transition-transform duration-300 hover:scale-110"
+                  src={testimonial.image}
+                />
+                <p className="text-gray-600 dark:text-gray-300 italic">
+                  "{testimonial.quote}"
+                </p>
+                <div>
+                  <h3 className="font-semibold">{testimonial.author}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {testimonial.role}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {testimonial.location}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Landing() {
   const { t } = useTranslation();
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Header */}
-      <header className="w-full border-b">
+      {/* Header - Now with backdrop blur */}
+      <header className="fixed top-0 left-0 right-0 w-full border-b bg-background/80 backdrop-blur-sm z-50">
         <div className="container px-4 mx-auto flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
@@ -134,10 +223,12 @@ export function Landing() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="w-full relative overflow-hidden bg-gradient-to-b from-white to-gray-50 py-20 dark:from-background dark:to-background/95">
-        <div className="container px-4 mx-auto">
-          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+      {/* Hero Section - Now full height with gradient fade */}
+      <section className="min-h-screen pt-16 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent z-0" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_50%)]" />
+        <div className="container relative px-4 mx-auto min-h-[calc(100vh-4rem)] flex items-center z-10">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 w-full">
             <div className="flex flex-col justify-center space-y-8">
               <div className="space-y-4">
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
@@ -183,10 +274,12 @@ export function Landing() {
             </div>
           </div>
         </div>
+        {/* Fade to next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-gray-100 dark:to-gray-900/50" />
       </section>
 
-      {/* Features Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50 dark:bg-gray-900/50">
+      {/* Features Section - Now with darker background and smooth transition */}
+      <section className="w-full py-24 lg:py-32 bg-gray-100 dark:bg-gray-900/50 relative">
         <div className="container px-4 mx-auto">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -200,12 +293,14 @@ export function Landing() {
             {keyFeatures.map((feature, index) => (
               <div
                 key={index}
-                className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow"
+                className="group bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-gray-50 dark:hover:bg-gray-800/50"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4 transition-transform duration-300 group-hover:scale-110">
                   <feature.icon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <h3 className="text-lg font-semibold mb-2 transition-colors duration-300 group-hover:text-primary">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-500 dark:text-gray-400">
                   {feature.description}
                 </p>
@@ -283,32 +378,7 @@ export function Landing() {
           <h2 className="text-center text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-12">
             Trusted by Healthcare Professionals
           </h2>
-          <div className="mx-auto max-w-5xl grid gap-8 md:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center space-y-4 text-center rounded-lg bg-gray-50 p-6 dark:bg-gray-900/50"
-              >
-                <img
-                  alt={testimonial.author}
-                  className="h-16 w-16 rounded-full object-cover"
-                  src={testimonial.image}
-                />
-                <p className="text-gray-600 dark:text-gray-300 italic">
-                  "{testimonial.quote}"
-                </p>
-                <div>
-                  <h3 className="font-semibold">{testimonial.author}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {testimonial.role}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {testimonial.location}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <TestimonialsCarousel />
         </div>
       </section>
 
