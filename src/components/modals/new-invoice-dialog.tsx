@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -27,16 +28,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useForm } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from 'lucide-react';
 import { cn, invoiceStatusVariants } from "@/lib/utils";
 import { toast } from "sonner";
-
-interface InvoiceItem {
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-}
 
 interface InvoiceFormValues {
   number: string;
@@ -48,6 +42,13 @@ interface InvoiceFormValues {
   paymentMethod: string;
 }
 
+interface InvoiceItem {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
 const paymentMethods = [
   { value: "card", label: "Credit Card" },
   { value: "cash", label: "Cash" },
@@ -55,8 +56,20 @@ const paymentMethods = [
   { value: "bank", label: "Bank Transfer" }
 ];
 
-export function NewInvoiceDialog() {
-  const [open, setOpen] = useState(false);
+interface NewInvoiceDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSave?: (data: any) => void;
+  withButton?: boolean;
+}
+
+export function NewInvoiceDialog({ 
+  open, 
+  onOpenChange, 
+  onSave,
+  withButton = true 
+}: NewInvoiceDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
   const form = useForm<InvoiceFormValues>({
     defaultValues: {
@@ -117,17 +130,35 @@ export function NewInvoiceDialog() {
   };
 
   function onSubmit(data: InvoiceFormValues) {
-    console.log(data);
-    toast.success("Invoice created successfully");
-    setOpen(false);
+    if (onSave) {
+      onSave(data);
+    }
+    if (onOpenChange) {
+      onOpenChange(false);
+    } else {
+      setIsOpen(false);
+    }
     form.reset();
   }
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(newOpen);
+    } else {
+      setIsOpen(newOpen);
+    }
+    if (!newOpen) {
+      form.reset();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>{t('invoices.new')}</Button>
-      </DialogTrigger>
+    <Dialog open={open !== undefined ? open : isOpen} onOpenChange={handleOpenChange}>
+      {withButton && !open && (
+        <DialogTrigger asChild>
+          <Button>{t('invoices.new')}</Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-4xl h-[90vh] p-0 flex flex-col">
         <DialogHeader className="px-6 py-4 border-b">
           <div className="flex flex-col space-y-4">

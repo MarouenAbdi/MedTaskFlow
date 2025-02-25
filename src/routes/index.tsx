@@ -10,6 +10,7 @@ import { Login } from '@/pages/login';
 import { SignUp } from '@/pages/signup';
 import { Payment } from '@/pages/payment';
 import { Pricing } from '@/pages/pricing';
+import { ManageSubscription } from '@/pages/manage-subscription';
 
 export function Routes() {
   return (
@@ -20,6 +21,7 @@ export function Routes() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/manage-subscription" element={<ManageSubscription />} />
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/appointments" element={<Appointments />} />

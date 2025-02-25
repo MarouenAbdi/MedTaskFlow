@@ -30,8 +30,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useForm } from "react-hook-form";
 import { User } from 'lucide-react';
 
-export function NewPatientDialog() {
-  const [open, setOpen] = useState(false);
+interface NewPatientDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSave?: (data: any) => void;
+  withButton?: boolean;
+}
+
+export function NewPatientDialog({ 
+  open, 
+  onOpenChange, 
+  onSave,
+  withButton = true 
+}: NewPatientDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState("");
   const { t } = useTranslation();
   const form = useForm({
@@ -47,9 +59,29 @@ export function NewPatientDialog() {
   });
 
   function onSubmit(data: any) {
-    console.log(data);
-    setOpen(false);
+    if (onSave) {
+      onSave(data);
+    }
+    if (onOpenChange) {
+      onOpenChange(false);
+    } else {
+      setIsOpen(false);
+    }
+    form.reset();
+    setAvatarPreview("");
   }
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(newOpen);
+    } else {
+      setIsOpen(newOpen);
+    }
+    if (!newOpen) {
+      form.reset();
+      setAvatarPreview("");
+    }
+  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,10 +95,12 @@ export function NewPatientDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>{t('patients.new')}</Button>
-      </DialogTrigger>
+    <Dialog open={open !== undefined ? open : isOpen} onOpenChange={handleOpenChange}>
+      {withButton && !open && (
+        <DialogTrigger asChild>
+          <Button>{t('patients.new')}</Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-h-[90vh] p-0">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle>{t('patients.new')}</DialogTitle>

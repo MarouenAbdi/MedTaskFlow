@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { addDays, format, startOfWeek, eachDayOfInterval, isWeekend } from 'date-fns';
+import { addDays, format, startOfWeek, eachDayOfInterval, isWeekend, isSameDay, parse } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -13,10 +13,17 @@ import { Badge } from '@/components/ui/badge';
 import { NewAppointmentDialog } from '@/components/modals/new-appointment-dialog';
 import { EditAppointmentDialog } from '@/components/modals/edit-appointment-dialog';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Updated appointments data with removed overlapping appointments
+// Generate time slots from 8 AM to 6 PM
+const timeSlots = Array.from({ length: 21 }, (_, i) => {
+  const hour = Math.floor(i / 2) + 8;
+  const minutes = i % 2 === 0 ? '00' : '30';
+  return `${hour.toString().padStart(2, '0')}:${minutes}`;
+});
+
+// Sample appointments data
 const initialAppointments = [
   // Monday
   {
@@ -110,19 +117,12 @@ const initialAppointments = [
   }
 ];
 
-// Generate time slots from 8 AM to 6 PM
-const timeSlots = Array.from({ length: 21 }, (_, i) => {
-  const hour = Math.floor(i / 2) + 8;
-  const minutes = i % 2 === 0 ? '00' : '30';
-  return `${hour.toString().padStart(2, '0')}:${minutes}`;
-});
-
 const appointmentTypes = [
   { value: "all", label: "All Types" },
-  { value: "checkup", label: "General Checkup" },
-  { value: "followup", label: "Follow-up" },
-  { value: "consultation", label: "Consultation" },
-  { value: "emergency", label: "Emergency" }
+  { value: "checkup", label: "GENERAL CHECKUP" },
+  { value: "followup", label: "FOLLOW-UP" },
+  { value: "consultation", label: "CONSULTATION" },
+  { value: "emergency", label: "EMERGENCY" }
 ];
 
 // Type-specific colors with better contrast
@@ -147,6 +147,20 @@ export function Appointments() {
   const [appointments, setAppointments] = useState(initialAppointments);
   const [selectedAppointment, setSelectedAppointment] = useState<typeof appointments[0] | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [newAppointmentOpen, setNewAppointmentOpen] = useState(false);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<{ date: Date; time: string } | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Handle responsive layout
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Get the start of the week for the current date
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
@@ -193,14 +207,34 @@ export function Appointments() {
     toast.success("Appointment deleted successfully");
   };
 
+  const handleTimeSlotClick = (day: Date, time: string) => {
+    const existingAppointments = getAppointmentsForTimeSlot(day, time);
+    if (existingAppointments.length === 0) {
+      setSelectedTimeSlot({ date: day, time });
+      setNewAppointmentOpen(true);
+    }
+  };
+
+  const handleNewAppointment = (appointment: typeof appointments[0]) => {
+    setAppointments(prev => [...prev, { ...appointment, id: Date.now() }]);
+    toast.success("New appointment created successfully");
+  };
+
+  const formatAppointmentType = (type: string) => {
+    if (type === 'followup') return 'FOLLOW-UP';
+    return type.toUpperCase();
+  };
+
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)]">
-      <div className="flex justify-between items-center mb-6">
+    <div className="flex flex-col space-y-6 min-h-[calc(100vh-8rem)] pb-8">
+      <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">{t('nav.appointments')}</h2>
-        <NewAppointmentDialog />
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
+      <div className={cn(
+        "flex flex-wrap gap-4",
+        isMobile ? "flex-col" : "items-center justify-between"
+      )}>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -216,16 +250,13 @@ export function Appointments() {
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
-        </div>
-
-        <div className="flex-1">
           <h3 className="text-lg font-semibold">
             {format(weekStart, 'MMMM d')} - {format(addDays(weekStart, 4), 'MMMM d, yyyy')}
           </h3>
         </div>
 
         <Select value={selectedType} onValueChange={setSelectedType}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full md:w-[200px]">
             <SelectValue placeholder="Appointment Type" />
           </SelectTrigger>
           <SelectContent>
@@ -239,79 +270,158 @@ export function Appointments() {
       </div>
 
       {/* Calendar Container */}
-      <div className="flex-1 border rounded-lg overflow-auto min-h-0">
-        <div className="grid grid-cols-[auto_1fr] h-full">
-          {/* Time slots column */}
-          <div className="border-r bg-muted/50">
-            <div className="h-12 border-b bg-muted/50"></div>
-            <div className="divide-y">
-              {timeSlots.map((time) => (
-                <div
-                  key={time}
-                  className="h-20 px-2 py-1 text-sm text-muted-foreground bg-muted/50"
-                >
-                  {time}
+      <div className="border rounded-lg flex-1">
+        {isMobile ? (
+          // Mobile View - Single Day with Timeline
+          <div className="flex flex-col h-full">
+            <div className="border-b sticky top-0 bg-background z-10">
+              <div className="overflow-x-auto scrollbar-none">
+                <div className="flex gap-2 p-2 min-w-max">
+                  {weekDays.map((day, index) => (
+                    <Button
+                      key={index}
+                      variant={isSameDay(day, currentDate) ? "default" : "ghost"}
+                      className="min-w-[120px]"
+                      onClick={() => setCurrentDate(day)}
+                    >
+                      <div className="text-center">
+                        <div>{format(day, 'EEE')}</div>
+                        <div className="text-sm">{format(day, 'MMM d')}</div>
+                      </div>
+                    </Button>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
-
-          {/* Days columns */}
-          <div className="min-w-full">
-            <div className="grid grid-cols-5 h-full">
-              {weekDays.map((day, index) => (
-                <div key={index} className="border-r last:border-r-0">
-                  <div className="h-12 border-b p-2 text-center bg-muted/50 sticky top-0 z-10">
-                    <div className="font-medium">{format(day, 'EEEE')}</div>
-                    <div className="text-sm text-muted-foreground">{format(day, 'MMM d')}</div>
-                  </div>
-                  <div>
-                    {timeSlots.map((time) => {
-                      const dayAppointments = getAppointmentsForTimeSlot(day, time);
-                      return (
-                        <div
-                          key={time}
-                          className={cn(
-                            "h-20 border-b p-1",
-                            dayAppointments.length > 0 && "bg-muted/30"
-                          )}
-                        >
-                          {dayAppointments.map((appointment) => (
-                            <div
-                              key={appointment.id}
-                              onClick={() => handleAppointmentClick(appointment)}
-                              className={cn(
-                                "rounded p-1.5 text-sm mb-1 cursor-pointer transition-colors",
-                                typeColors[appointment.type as keyof typeof typeColors],
-                                "hover:opacity-90"
-                              )}
-                            >
-                              <div className="font-medium truncate">{appointment.patient}</div>
-                              <div className="flex items-center gap-1">
-                                <Badge 
-                                  variant="outline" 
-                                  className={cn(
-                                    "text-xs",
-                                    badgeColors[appointment.type as keyof typeof badgeColors]
-                                  )}
-                                >
-                                  {appointment.type}
-                                </Badge>
-                                <span className="text-xs text-muted-foreground">
-                                  {appointment.duration}min
-                                </span>
+            <div className="overflow-y-auto flex-1">
+              <div className="divide-y">
+                {timeSlots.map((time) => {
+                  const dayAppointments = getAppointmentsForTimeSlot(currentDate, time);
+                  return (
+                    <div 
+                      key={time} 
+                      className="p-4 cursor-pointer hover:bg-accent/50 transition-colors"
+                      onClick={() => handleTimeSlotClick(currentDate, time)}
+                    >
+                      <div className="text-sm text-muted-foreground mb-2">{time}</div>
+                      <div className="space-y-2">
+                        {dayAppointments.map((appointment) => (
+                          <div
+                            key={appointment.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAppointmentClick(appointment);
+                            }}
+                            className={cn(
+                              "rounded-lg p-3 cursor-pointer transition-colors",
+                              typeColors[appointment.type as keyof typeof typeColors],
+                              "hover:opacity-90"
+                            )}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="font-medium">{appointment.patient}</div>
+                              <div className="text-sm text-muted-foreground">
+                                <Clock className="h-3 w-3 inline-block mr-1" />
+                                {appointment.duration}min
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+                            <Badge 
+                              variant="outline" 
+                              className={cn(
+                                "text-xs",
+                                badgeColors[appointment.type as keyof typeof badgeColors]
+                              )}
+                            >
+                              {formatAppointmentType(appointment.type)}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          // Desktop View - Week Calendar
+          <div className="grid grid-cols-[auto_1fr] h-full">
+            <div className="border-r bg-muted/50">
+              <div className="h-16 border-b bg-muted/50"></div>
+              <div className="divide-y">
+                {timeSlots.map((time) => (
+                  <div
+                    key={time}
+                    className="h-20 px-2 py-1 text-sm text-muted-foreground bg-muted/50"
+                  >
+                    {time}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <div className="grid grid-cols-5 h-full min-w-[800px]">
+                {weekDays.map((day, index) => (
+                  <div key={index} className="border-r last:border-r-0">
+                    <div className="sticky top-0 z-10 bg-background">
+                      <div className="h-16 border-b p-2 text-center bg-muted/50">
+                        <div className="font-medium">{format(day, 'EEEE')}</div>
+                        <div className="text-sm text-muted-foreground mt-1">{format(day, 'MMM d')}</div>
+                      </div>
+                    </div>
+                    <div>
+                      {timeSlots.map((time) => {
+                        const dayAppointments = getAppointmentsForTimeSlot(day, time);
+                        return (
+                          <div
+                            key={time}
+                            className={cn(
+                              "h-20 border-b p-1 cursor-pointer hover:bg-accent/50 transition-colors",
+                              dayAppointments.length > 0 && "bg-muted/30"
+                            )}
+                            onClick={() => handleTimeSlotClick(day, time)}
+                          >
+                            {dayAppointments.map((appointment) => (
+                              <div
+                                key={appointment.id}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAppointmentClick(appointment);
+                                }}
+                                className={cn(
+                                  "rounded-lg p-2 text-sm mb-1 cursor-pointer transition-colors",
+                                  typeColors[appointment.type as keyof typeof typeColors],
+                                  "hover:opacity-90"
+                                )}
+                              >
+                                <div className="font-medium truncate">{appointment.patient}</div>
+                                <div className="flex items-center gap-2">
+                                  <Badge 
+                                    variant="outline" 
+                                    className={cn(
+                                      "text-xs",
+                                      badgeColors[appointment.type as keyof typeof badgeColors]
+                                    )}
+                                  >
+                                    {formatAppointmentType(appointment.type)}
+                                  </Badge>
+                                  <span className="text-xs text-muted-foreground">
+                                    {appointment.duration}min
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {selectedAppointment && (
@@ -323,6 +433,15 @@ export function Appointments() {
           onDelete={handleDeleteAppointment}
         />
       )}
+
+      <NewAppointmentDialog
+        open={newAppointmentOpen}
+        onOpenChange={setNewAppointmentOpen}
+        defaultDate={selectedTimeSlot?.date}
+        defaultTime={selectedTimeSlot?.time}
+        onSave={handleNewAppointment}
+        withButton={false}
+      />
     </div>
   );
 }

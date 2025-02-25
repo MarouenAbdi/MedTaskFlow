@@ -31,16 +31,20 @@ import { RichTextEditorModal } from "./rich-text-editor-modal";
 import { Copy, Trash2 } from 'lucide-react';
 import { toast } from "sonner";
 
-const doctors = [
-  { id: 1, name: "Dr. Smith", speciality: "General Practice" },
-  { id: 2, name: "Dr. Chen", speciality: "Cardiology" },
-  { id: 3, name: "Dr. Rodriguez", speciality: "Pediatrics" },
-  { id: 4, name: "Dr. Johnson", speciality: "Neurology" },
-  { id: 5, name: "Dr. Williams", speciality: "Orthopedics" }
-];
+interface NewMedicalRecordDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSave?: (data: any) => void;
+  withButton?: boolean;
+}
 
-export function NewMedicalRecordDialog() {
-  const [open, setOpen] = useState(false);
+export function NewMedicalRecordDialog({ 
+  open, 
+  onOpenChange, 
+  onSave,
+  withButton = true 
+}: NewMedicalRecordDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
   const form = useForm({
     defaultValues: {
@@ -57,9 +61,27 @@ export function NewMedicalRecordDialog() {
   });
 
   function onSubmit(data: any) {
-    console.log(data);
-    setOpen(false);
+    if (onSave) {
+      onSave(data);
+    }
+    if (onOpenChange) {
+      onOpenChange(false);
+    } else {
+      setIsOpen(false);
+    }
+    form.reset();
   }
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(newOpen);
+    } else {
+      setIsOpen(newOpen);
+    }
+    if (!newOpen) {
+      form.reset();
+    }
+  };
 
   const extractTextFromHtml = (html: string) => {
     const tempDiv = document.createElement('div');
@@ -111,7 +133,7 @@ export function NewMedicalRecordDialog() {
                     }
                   }}
                 />
-                <div className="absolute top-2 right-2 flex gap-1" onClick={e => e.stopPropagation()}>
+                <div className="absolute top-2 right-2 flex gap-1">
                   <Button
                     type="button"
                     variant="ghost"
@@ -148,10 +170,12 @@ export function NewMedicalRecordDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>{t('medicalRecords.new')}</Button>
-      </DialogTrigger>
+    <Dialog open={open !== undefined ? open : isOpen} onOpenChange={handleOpenChange}>
+      {withButton && !open && (
+        <DialogTrigger asChild>
+          <Button>{t('medicalRecords.new')}</Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-h-[90vh] p-0">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle>{t('medicalRecords.new')}</DialogTitle>

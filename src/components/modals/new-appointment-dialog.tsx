@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,29 +29,75 @@ import {
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 
-export function NewAppointmentDialog() {
-  const [open, setOpen] = useState(false);
+interface NewAppointmentDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultDate?: Date;
+  defaultTime?: string;
+  onSave?: (data: any) => void;
+  withButton?: boolean;
+}
+
+export function NewAppointmentDialog({ 
+  open, 
+  onOpenChange,
+  defaultDate,
+  defaultTime,
+  onSave,
+  withButton = true
+}: NewAppointmentDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const { t } = useTranslation();
   const form = useForm({
     defaultValues: {
       patientName: "",
-      date: "",
-      time: "",
+      date: defaultDate ? format(defaultDate, 'yyyy-MM-dd') : "",
+      time: defaultTime || "",
       type: "",
+      duration: "30",
       notes: "",
     },
   });
 
+  useEffect(() => {
+    if (defaultDate) {
+      form.setValue('date', format(defaultDate, 'yyyy-MM-dd'));
+    }
+    if (defaultTime) {
+      form.setValue('time', defaultTime);
+    }
+  }, [defaultDate, defaultTime, form]);
+
   function onSubmit(data: any) {
-    console.log(data);
-    setOpen(false);
+    if (onSave) {
+      onSave(data);
+    }
+    if (onOpenChange) {
+      onOpenChange(false);
+    } else {
+      setIsOpen(false);
+    }
+    form.reset();
   }
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(newOpen);
+    } else {
+      setIsOpen(newOpen);
+    }
+    if (!newOpen) {
+      form.reset();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>{t('appointments.new')}</Button>
-      </DialogTrigger>
+    <Dialog open={open !== undefined ? open : isOpen} onOpenChange={handleOpenChange}>
+      {withButton && !open && (
+        <DialogTrigger asChild>
+          <Button>{t('appointments.new')}</Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-h-[90vh] p-0">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle>{t('appointments.new')}</DialogTitle>
@@ -118,6 +165,29 @@ export function NewAppointmentDialog() {
                           <SelectItem value="followup">{t('appointments.typeFollowup')}</SelectItem>
                           <SelectItem value="consultation">{t('appointments.typeConsultation')}</SelectItem>
                           <SelectItem value="emergency">{t('appointments.typeEmergency')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Duration (minutes)</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="15">15 minutes</SelectItem>
+                          <SelectItem value="30">30 minutes</SelectItem>
+                          <SelectItem value="45">45 minutes</SelectItem>
+                          <SelectItem value="60">1 hour</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
