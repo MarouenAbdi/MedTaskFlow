@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "TheMedPilot"
+    "name": "MedTaskFlow"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -38,13 +38,20 @@
     "email": "E-Mail",
     "password": "Passwort",
     "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "fullName": "Vollständiger Name",
+    "fullNamePlaceholder": "Max Mustermann",
+    "createAccount": "Konto erstellen",
+    "signUpPrompt": "Geben Sie Ihre Daten ein, um ein Konto zu erstellen",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "dontHaveAccount": "Haben Sie kein Konto?",
     "continueWith": "Oder fortfahren mit",
     "google": "Google",
     "terms": "Durch Fortfahren stimmen Sie unseren",
     "termsLink": "Nutzungsbedingungen",
     "and": "und",
     "privacyLink": "Datenschutzrichtlinien",
-    "testimonial": "TheMedPilot hat revolutioniert, wie wir unsere medizinische Praxis verwalten und macht es einfacher, uns auf das Wichtigste zu konzentrieren – unsere Patienten."
+    "testimonial": "MedTaskFlow hat revolutioniert, wie wir unsere medizinische Praxis verwalten und macht es einfacher, uns auf das Wichtigste zu konzentrieren – unsere Patienten."
   },
   "dashboard": {
     "totalAppointments": "Termine gesamt",
@@ -82,8 +89,12 @@
     "lastVisit": "Letzter Besuch",
     "status": "Status",
     "statusActive": "Aktiv",
+    "statusInactive": "Inaktiv",
     "new": "Neuer Patient",
     "save": "Patient speichern",
+    "details": "Patientendetails",
+    "detailsDescription": "Patienteninformationen anzeigen und bearbeiten",
+    "changePhoto": "Foto ändern",
     "description": "Fügen Sie einen neuen Patienten zum System hinzu. Klicken Sie auf Speichern, wenn Sie fertig sind.",
     "namePlaceholder": "Max Mustermann",
     "email": "E-Mail",
@@ -102,20 +113,23 @@
   "medicalRecords": {
     "patient": "Patient",
     "date": "Datum",
-    "type": "Typ",
     "doctor": "Arzt",
+    "type": "Typ",
     "status": "Status",
-    "typeCheckup": "Allgemeine Untersuchung",
-    "statusCompleted": "Abgeschlossen",
-    "new": "Neue Krankenakte",
-    "save": "Akte speichern",
-    "description": "Erstellen Sie eine neue Krankenakte. Klicken Sie auf Speichern, wenn Sie fertig sind.",
-    "selectType": "Aktentyp auswählen",
     "typeConsultation": "Beratung",
     "typeExamination": "Untersuchung",
     "typeProcedure": "Verfahren",
     "typeTest": "Testergebnisse",
     "typeFollowup": "Nachuntersuchung",
+    "statusNotStarted": "Nicht begonnen",
+    "statusOnHold": "Angehalten",
+    "statusPending": "In Bearbeitung",
+    "statusCompleted": "Abgeschlossen",
+    "new": "Neue Krankenakte",
+    "save": "Akte speichern",
+    "description": "Erstellen Sie eine neue Krankenakte. Klicken Sie auf Speichern, wenn Sie fertig sind.",
+    "selectType": "Aktentyp auswählen",
+    "selectDoctor": "Arzt auswählen",
     "doctorPlaceholder": "Dr. Schmidt",
     "symptoms": "Symptome",
     "symptomsPlaceholder": "Symptome und Beschwerden des Patienten...",
@@ -123,7 +137,10 @@
     "diagnosisPlaceholder": "Klinische Diagnose...",
     "treatment": "Behandlungsplan",
     "treatmentPlaceholder": "Verschriebene Behandlung und Medikamente...",
-    "attachments": "Anhänge"
+    "attachments": "Anhänge",
+    "export": "Als PDF exportieren",
+    "exportSuccess": "Krankenakte erfolgreich exportiert",
+    "exportError": "Fehler beim Exportieren der Krankenakte"
   },
   "invoices": {
     "number": "Rechnung #",
@@ -146,10 +163,10 @@
     "dueDate": "Fälligkeitsdatum",
     "paymentMethod": "Zahlungsmethode",
     "selectPaymentMethod": "Zahlungsmethode auswählen",
-    "paymentCard": "Kreditkarte",
+    "paymentCreditCard": "Kreditkarte",
     "paymentCash": "Bargeld",
     "paymentInsurance": "Versicherung",
-    "paymentBank": "Banküberweisung"
+    "paymentBankTransfer": "Banküberweisung"
   },
   "common": {
     "new": "Neu",
@@ -158,6 +175,10 @@
     "search": "Suchen",
     "noData": "Keine Daten verfügbar",
     "notes": "Notizen",
-    "notesPlaceholder": "Zusätzliche Notizen..."
+    "notesPlaceholder": "Zusätzliche Notizen...",
+    "unsavedChanges": "Nicht gespeicherte Änderungen",
+    "unsavedChangesDescription": "Sie haben nicht gespeicherte Änderungen. Möchten Sie weiter bearbeiten oder die Änderungen verwerfen?",
+    "continueEditing": "Weiter bearbeiten",
+    "discardChanges": "Änderungen verwerfen"
   }
 }

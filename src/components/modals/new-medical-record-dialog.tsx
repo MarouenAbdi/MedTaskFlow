@@ -31,6 +31,14 @@ import { RichTextEditorModal } from "./rich-text-editor-modal";
 import { Copy, Trash2 } from 'lucide-react';
 import { toast } from "sonner";
 
+const doctors = [
+  { id: 1, name: "Dr. Smith", speciality: "General Practice" },
+  { id: 2, name: "Dr. Chen", speciality: "Cardiology" },
+  { id: 3, name: "Dr. Rodriguez", speciality: "Pediatrics" },
+  { id: 4, name: "Dr. Johnson", speciality: "Neurology" },
+  { id: 5, name: "Dr. Williams", speciality: "Orthopedics" }
+];
+
 export function NewMedicalRecordDialog() {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
@@ -39,7 +47,7 @@ export function NewMedicalRecordDialog() {
       patientName: "",
       date: "",
       type: "",
-      doctor: "",
+      status: "notstarted",
       symptoms: "",
       diagnosis: "",
       treatment: "",
@@ -210,13 +218,31 @@ export function NewMedicalRecordDialog() {
                   />
                   <FormField
                     control={form.control}
-                    name="doctor"
+                    name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('medicalRecords.doctor')}</FormLabel>
-                        <FormControl>
-                          <Input placeholder={t('medicalRecords.doctorPlaceholder')} {...field} />
-                        </FormControl>
+                        <FormLabel>{t('medicalRecords.status')}</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t('medicalRecords.selectStatus')} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="notstarted">
+                              {t('medicalRecords.statusNotStarted')}
+                            </SelectItem>
+                            <SelectItem value="onhold">
+                              {t('medicalRecords.statusOnHold')}
+                            </SelectItem>
+                            <SelectItem value="pending">
+                              {t('medicalRecords.statusPending')}
+                            </SelectItem>
+                            <SelectItem value="completed">
+                              {t('medicalRecords.statusCompleted')}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}

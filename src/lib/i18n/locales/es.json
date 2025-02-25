@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "TheMedPilot"
+    "name": "MedTaskFlow"
   },
   "nav": {
     "dashboard": "Panel",
@@ -19,6 +19,12 @@
     "dark": "Oscuro",
     "system": "Sistema"
   },
+  "settings": {
+    "description": "Administre sus preferencias y configuración de la aplicación.",
+    "themeDescription": "Elija su tema de color preferido para la aplicación.",
+    "languageDescription": "Seleccione su idioma preferido para la interfaz.",
+    "selectLanguage": "Idioma de la interfaz"
+  },
   "languages": {
     "en": "Inglés",
     "fr": "Francés",
@@ -32,13 +38,20 @@
     "email": "Correo",
     "password": "Contraseña",
     "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "fullName": "Nombre completo",
+    "fullNamePlaceholder": "Juan Pérez",
+    "createAccount": "Crear una cuenta",
+    "signUpPrompt": "Ingrese sus datos para crear su cuenta",
+    "alreadyHaveAccount": "¿Ya tiene una cuenta?",
+    "dontHaveAccount": "¿No tiene una cuenta?",
     "continueWith": "O continuar con",
     "google": "Google",
-    "terms": "Al continuar, aceptas nuestros",
+    "terms": "Al continuar, acepta nuestros",
     "termsLink": "Términos de servicio",
     "and": "y",
     "privacyLink": "Política de privacidad",
-    "testimonial": "TheMedPilot ha revolucionado la forma en que gestionamos nuestra práctica médica, facilitando centrarnos en lo que realmente importa – nuestros pacientes."
+    "testimonial": "MedTaskFlow ha revolucionado la forma en que gestionamos nuestra práctica médica, facilitando centrarnos en lo que realmente importa – nuestros pacientes."
   },
   "dashboard": {
     "totalAppointments": "Total de citas",
@@ -76,8 +89,12 @@
     "lastVisit": "Última visita",
     "status": "Estado",
     "statusActive": "Activo",
+    "statusInactive": "Inactivo",
     "new": "Nuevo Paciente",
     "save": "Guardar Paciente",
+    "details": "Detalles del paciente",
+    "detailsDescription": "Ver y editar información del paciente",
+    "changePhoto": "Cambiar foto",
     "description": "Agregar un nuevo paciente al sistema. Haga clic en guardar cuando termine.",
     "namePlaceholder": "Juan Pérez",
     "email": "Correo",
@@ -96,20 +113,23 @@
   "medicalRecords": {
     "patient": "Paciente",
     "date": "Fecha",
-    "type": "Tipo",
     "doctor": "Doctor",
+    "type": "Tipo",
     "status": "Estado",
-    "typeCheckup": "Revisión General",
-    "statusCompleted": "Completado",
-    "new": "Nuevo Registro Médico",
-    "save": "Guardar Registro",
-    "description": "Crear un nuevo registro médico. Haga clic en guardar cuando termine.",
-    "selectType": "Seleccionar tipo de registro",
     "typeConsultation": "Consulta",
     "typeExamination": "Examinación",
     "typeProcedure": "Procedimiento",
     "typeTest": "Resultados de pruebas",
     "typeFollowup": "Seguimiento",
+    "statusNotStarted": "No iniciado",
+    "statusOnHold": "En espera",
+    "statusPending": "Pendiente",
+    "statusCompleted": "Completado",
+    "new": "Nuevo Registro Médico",
+    "save": "Guardar Registro",
+    "description": "Crear un nuevo registro médico. Haga clic en guardar cuando termine.",
+    "selectType": "Seleccionar tipo de registro",
+    "selectDoctor": "Seleccionar doctor",
     "doctorPlaceholder": "Dr. García",
     "symptoms": "Síntomas",
     "symptomsPlaceholder": "Síntomas y quejas del paciente...",
@@ -117,7 +137,10 @@
     "diagnosisPlaceholder": "Diagnóstico clínico...",
     "treatment": "Plan de tratamiento",
     "treatmentPlaceholder": "Tratamiento y medicamentos prescritos...",
-    "attachments": "Archivos adjuntos"
+    "attachments": "Archivos adjuntos",
+    "export": "Exportar a PDF",
+    "exportSuccess": "Registro médico exportado exitosamente",
+    "exportError": "Error al exportar el registro médico"
   },
   "invoices": {
     "number": "Factura #",
@@ -140,10 +163,10 @@
     "dueDate": "Fecha de vencimiento",
     "paymentMethod": "Método de pago",
     "selectPaymentMethod": "Seleccionar método de pago",
-    "paymentCard": "Tarjeta de crédito",
+    "paymentCreditCard": "Tarjeta de crédito",
     "paymentCash": "Efectivo",
     "paymentInsurance": "Seguro",
-    "paymentBank": "Transferencia bancaria"
+    "paymentBankTransfer": "Transferencia bancaria"
   },
   "common": {
     "new": "Nuevo",
@@ -152,6 +175,10 @@
     "search": "Buscar",
     "noData": "No hay datos disponibles",
     "notes": "Notas",
-    "notesPlaceholder": "Notas adicionales..."
+    "notesPlaceholder": "Notas adicionales...",
+    "unsavedChanges": "Cambios no guardados",
+    "unsavedChangesDescription": "Tiene cambios sin guardar. ¿Desea continuar editando o descartar sus cambios?",
+    "continueEditing": "Continuar editando",
+    "discardChanges": "Descartar cambios"
   }
 }

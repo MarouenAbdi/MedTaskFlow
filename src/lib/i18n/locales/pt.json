@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "TheMedPilot"
+    "name": "MedTaskFlow"
   },
   "nav": {
     "dashboard": "Painel",
@@ -19,6 +19,12 @@
     "dark": "Escuro",
     "system": "Sistema"
   },
+  "settings": {
+    "description": "Gerencie suas preferências e configurações do aplicativo.",
+    "themeDescription": "Escolha seu tema de cor preferido para o aplicativo.",
+    "languageDescription": "Selecione seu idioma preferido para a interface.",
+    "selectLanguage": "Idioma da interface"
+  },
   "languages": {
     "en": "Inglês",
     "fr": "Francês",
@@ -32,13 +38,20 @@
     "email": "Email",
     "password": "Senha",
     "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "fullName": "Nome completo",
+    "fullNamePlaceholder": "João Silva",
+    "createAccount": "Criar uma conta",
+    "signUpPrompt": "Digite seus dados para criar sua conta",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "dontHaveAccount": "Não tem uma conta?",
     "continueWith": "Ou continuar com",
     "google": "Google",
     "terms": "Ao continuar, você concorda com nossos",
     "termsLink": "Termos de serviço",
     "and": "e",
     "privacyLink": "Política de privacidade",
-    "testimonial": "TheMedPilot revolucionou a forma como gerenciamos nossa prática médica, tornando mais fácil focar no que realmente importa – nossos pacientes."
+    "testimonial": "MedTaskFlow revolucionou a forma como gerenciamos nossa prática médica, tornando mais fácil focar no que realmente importa – nossos pacientes."
   },
   "dashboard": {
     "totalAppointments": "Total de consultas",
@@ -76,8 +89,12 @@
     "lastVisit": "Última visita",
     "status": "Status",
     "statusActive": "Ativo",
+    "statusInactive": "Inativo",
     "new": "Novo Paciente",
     "save": "Salvar Paciente",
+    "details": "Detalhes do paciente",
+    "detailsDescription": "Ver e editar informações do paciente",
+    "changePhoto": "Alterar foto",
     "description": "Adicionar um novo paciente ao sistema. Clique em salvar quando terminar.",
     "namePlaceholder": "João Silva",
     "email": "Email",
@@ -96,20 +113,23 @@
   "medicalRecords": {
     "patient": "Paciente",
     "date": "Data",
-    "type": "Tipo",
     "doctor": "Médico",
+    "type": "Tipo",
     "status": "Status",
-    "typeCheckup": "Check-up Geral",
-    "statusCompleted": "Concluído",
-    "new": "Novo Registro Médico",
-    "save": "Salvar Registro",
-    "description": "Criar um novo registro médico. Clique em salvar quando terminar.",
-    "selectType": "Selecionar tipo de registro",
     "typeConsultation": "Consulta",
     "typeExamination": "Exame",
     "typeProcedure": "Procedimento",
     "typeTest": "Resultados de exames",
     "typeFollowup": "Retorno",
+    "statusNotStarted": "Não iniciado",
+    "statusOnHold": "Em espera",
+    "statusPending": "Pendente",
+    "statusCompleted": "Concluído",
+    "new": "Novo Registro Médico",
+    "save": "Salvar Registro",
+    "description": "Criar um novo registro médico. Clique em salvar quando terminar.",
+    "selectType": "Selecionar tipo de registro",
+    "selectDoctor": "Selecionar médico",
     "doctorPlaceholder": "Dr. Silva",
     "symptoms": "Sintomas",
     "symptomsPlaceholder": "Sintomas e queixas do paciente...",
@@ -117,7 +137,10 @@
     "diagnosisPlaceholder": "Diagnóstico clínico...",
     "treatment": "Plano de tratamento",
     "treatmentPlaceholder": "Tratamento e medicamentos prescritos...",
-    "attachments": "Anexos"
+    "attachments": "Anexos",
+    "export": "Exportar para PDF",
+    "exportSuccess": "Registro médico exportado com sucesso",
+    "exportError": "Erro ao exportar registro médico"
   },
   "invoices": {
     "number": "Fatura #",
@@ -140,10 +163,10 @@
     "dueDate": "Data de vencimento",
     "paymentMethod": "Método de pagamento",
     "selectPaymentMethod": "Selecionar método de pagamento",
-    "paymentCard": "Cartão de crédito",
+    "paymentCreditCard": "Cartão de crédito",
     "paymentCash": "Dinheiro",
     "paymentInsurance": "Seguro",
-    "paymentBank": "Transferência bancária"
+    "paymentBankTransfer": "Transferência bancária"
   },
   "common": {
     "new": "Novo",
@@ -152,6 +175,10 @@
     "search": "Pesquisar",
     "noData": "Nenhum dado disponível",
     "notes": "Notas",
-    "notesPlaceholder": "Notas adicionais..."
+    "notesPlaceholder": "Notas adicionais...",
+    "unsavedChanges": "Alterações não salvas",
+    "unsavedChangesDescription": "Você tem alterações não salvas. Deseja continuar editando ou descartar suas alterações?",
+    "continueEditing": "Continuar editando",
+    "discardChanges": "Descartar alterações"
   }
 }

@@ -102,7 +102,7 @@ export function Patients() {
   const [detailsOpen, setDetailsOpen] = useState(false);
 
   const handleRowClick = (patient: typeof patients[0]) => {
-    setSelectedPatient(patient);
+    setSelectedPatient({ ...patient });
     setDetailsOpen(true);
   };
 
@@ -114,6 +114,12 @@ export function Patients() {
           : patient
       )
     );
+    
+    // Also update the selected patient if it's currently being viewed
+    if (selectedPatient?.id === patientId) {
+      setSelectedPatient(prev => prev ? { ...prev, status: newStatus } : null);
+    }
+    
     toast.success(`Patient status updated to ${newStatus}`);
   };
 
@@ -123,6 +129,7 @@ export function Patients() {
         patient.id === updatedPatient.id ? updatedPatient : patient
       )
     );
+    setSelectedPatient(updatedPatient);
   };
 
   return (

@@ -3,202 +3,38 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Calendar,
   DollarSign,
-  Users,
-  Activity,
+  UserCheck,
+  AlertCircle,
+  HeartPulse,
+  TrendingUp,
+  FileText,
+  CalendarClock,
+  UserPlus,
+  ClipboardList,
+  BellRing,
+  Clock,
 } from 'lucide-react';
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
 
-const areaChartData = [
-  { month: 'Jan', patients: 100, appointments: 150 },
-  { month: 'Feb', patients: 120, appointments: 180 },
-  { month: 'Mar', patients: 140, appointments: 200 },
-  { month: 'Apr', patients: 160, appointments: 220 },
-  { month: 'May', patients: 180, appointments: 240 },
-  { month: 'Jun', patients: 200, appointments: 260 },
+const upcomingAppointments = [
+  { patient: "Emma Thompson", time: "09:00", type: "Checkup" },
+  { patient: "James Wilson", time: "10:30", type: "Follow-up" },
+  { patient: "Sophia Chen", time: "11:45", type: "Consultation" },
+  { patient: "Lucas Garcia", time: "14:15", type: "Emergency" },
 ];
 
-const barChartData = [
-  { name: 'Cardiology', new: 45, returning: 55 },
-  { name: 'Pediatrics', new: 35, returning: 45 },
-  { name: 'Neurology', new: 25, returning: 35 },
-  { name: 'Orthopedics', new: 30, returning: 40 },
+const recentAlerts = [
+  { message: "Low inventory for medical supplies", priority: "high" },
+  { message: "Patient records need updating", priority: "medium" },
+  { message: "Insurance verification pending", priority: "medium" },
+  { message: "Equipment maintenance due", priority: "low" },
 ];
-
-const pieChartData = [
-  { name: 'Insurance', value: 55 },
-  { name: 'Cash', value: 25 },
-  { name: 'Credit Card', value: 15 },
-  { name: 'Other', value: 5 },
-];
-
-const COLORS = {
-  // Primary blues
-  blue: {
-    light: '#60A5FA', // blue-400
-    DEFAULT: '#3B82F6', // blue-500
-    dark: '#2563EB', // blue-600
-  },
-  // Neutral greys
-  grey: {
-    lightest: '#F3F4F6', // gray-100
-    light: '#D1D5DB', // gray-300
-    DEFAULT: '#9CA3AF', // gray-400
-    dark: '#4B5563', // gray-600
-    darkest: '#1F2937', // gray-800
-  }
-};
-
-const chartConfig = {
-  xAxis: {
-    stroke: 'currentColor',
-    strokeOpacity: 0.5,
-    fontSize: 12,
-    tickLine: false,
-    axisLine: false,
-  },
-  yAxis: {
-    stroke: 'currentColor',
-    strokeOpacity: 0.5,
-    fontSize: 12,
-    tickLine: false,
-    axisLine: false,
-  },
-  cartesianGrid: {
-    strokeDasharray: '3 3',
-    stroke: 'currentColor',
-    strokeOpacity: 0.1,
-  },
-  tooltip: {
-    contentStyle: {
-      backgroundColor: 'rgba(17, 24, 39, 0.8)',
-      border: 'none',
-      borderRadius: '8px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    },
-  },
-};
-
-function AreaChartComponent() {
-  return (
-    <ResponsiveContainer width="100%" height={300}>
-      <AreaChart data={areaChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-        <defs>
-          <linearGradient id="patients" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={COLORS.blue.DEFAULT} stopOpacity={0.2}/>
-            <stop offset="95%" stopColor={COLORS.blue.DEFAULT} stopOpacity={0}/>
-          </linearGradient>
-          <linearGradient id="appointments" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={COLORS.grey.DEFAULT} stopOpacity={0.2}/>
-            <stop offset="95%" stopColor={COLORS.grey.DEFAULT} stopOpacity={0}/>
-          </linearGradient>
-        </defs>
-        <CartesianGrid {...chartConfig.cartesianGrid} />
-        <XAxis dataKey="month" {...chartConfig.xAxis} />
-        <YAxis {...chartConfig.yAxis} />
-        <Tooltip {...chartConfig.tooltip} />
-        <Area 
-          type="monotone" 
-          dataKey="patients" 
-          stroke={COLORS.blue.DEFAULT} 
-          fillOpacity={1} 
-          fill="url(#patients)" 
-          strokeWidth={2}
-          name="Patients"
-        />
-        <Area 
-          type="monotone" 
-          dataKey="appointments" 
-          stroke={COLORS.grey.DEFAULT} 
-          fillOpacity={1} 
-          fill="url(#appointments)" 
-          strokeWidth={2}
-          name="Appointments"
-        />
-        <Legend />
-      </AreaChart>
-    </ResponsiveContainer>
-  );
-}
-
-function BarChartComponent() {
-  return (
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-        <CartesianGrid {...chartConfig.cartesianGrid} />
-        <XAxis dataKey="name" {...chartConfig.xAxis} />
-        <YAxis {...chartConfig.yAxis} />
-        <Tooltip {...chartConfig.tooltip} />
-        <Legend />
-        <Bar 
-          dataKey="new" 
-          fill={COLORS.blue.light} 
-          name="New Patients" 
-          radius={[4, 4, 0, 0]}
-        />
-        <Bar 
-          dataKey="returning" 
-          fill={COLORS.blue.dark} 
-          name="Returning Patients" 
-          radius={[4, 4, 0, 0]}
-        />
-      </BarChart>
-    </ResponsiveContainer>
-  );
-}
-
-function PieChartComponent() {
-  const pieColors = [
-    COLORS.blue.DEFAULT,
-    COLORS.grey.light,
-    COLORS.blue.light,
-    COLORS.grey.DEFAULT
-  ];
-
-  return (
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
-        <Pie
-          data={pieChartData}
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={80}
-          paddingAngle={5}
-          dataKey="value"
-        >
-          {pieChartData.map((_, index) => (
-            <Cell 
-              key={`cell-${index}`} 
-              fill={pieColors[index % pieColors.length]}
-            />
-          ))}
-        </Pie>
-        <Tooltip {...chartConfig.tooltip} />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
-  );
-}
 
 export function Dashboard() {
   const { t } = useTranslation();
 
   return (
     <div className="space-y-8">
+      {/* Quick Stats */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -209,80 +45,194 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">
-              {t('dashboard.fromYesterday')}
-            </p>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <Clock className="mr-1 h-3 w-3" />
+              Today's Schedule
+            </div>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('dashboard.totalPatients')}
+              Active Patients
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <UserCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">345</div>
-            <p className="text-xs text-muted-foreground">
-              {t('dashboard.thisWeek')}
-            </p>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
+              +5 this week
+            </div>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('dashboard.revenue')}
+              Monthly Revenue
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">$12,450</div>
-            <p className="text-xs text-muted-foreground">
-              {t('dashboard.lastMonth')}
-            </p>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
+              +15% from last month
+            </div>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('dashboard.patientGrowth')}
+              Patient Satisfaction
             </CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <HeartPulse className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+12.5%</div>
-            <p className="text-xs text-muted-foreground">
-              {t('dashboard.growthRate')}
-            </p>
+            <div className="text-2xl font-bold">98%</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
+              +2.1% from last month
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Growth Trends</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <AreaChartComponent />
-          </CardContent>
-        </Card>
-
+      {/* Main Content Grid */}
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        {/* Today's Schedule */}
         <Card>
           <CardHeader>
-            <CardTitle>Payment Distribution</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarClock className="h-5 w-5" />
+              Today's Schedule
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <PieChartComponent />
+            <div className="space-y-4">
+              {upcomingAppointments.map((appointment, index) => (
+                <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-muted/50">
+                  <div>
+                    <p className="font-medium">{appointment.patient}</p>
+                    <p className="text-sm text-muted-foreground">{appointment.type}</p>
+                  </div>
+                  <div className="text-sm font-medium">{appointment.time}</div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="col-span-2 lg:col-span-3">
+        {/* System Alerts */}
+        <Card>
           <CardHeader>
-            <CardTitle>Department Statistics</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              System Alerts
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <BarChartComponent />
+            <div className="space-y-4">
+              {recentAlerts.map((alert, index) => (
+                <div
+                  key={index}
+                  className={`flex items-start gap-2 p-2 rounded-lg ${
+                    alert.priority === 'high'
+                      ? 'bg-red-50 dark:bg-red-900/20'
+                      : alert.priority === 'medium'
+                      ? 'bg-yellow-50 dark:bg-yellow-900/20'
+                      : 'bg-blue-50 dark:bg-blue-900/20'
+                  }`}
+                >
+                  <BellRing className={`h-4 w-4 mt-0.5 ${
+                    alert.priority === 'high'
+                      ? 'text-red-500'
+                      : alert.priority === 'medium'
+                      ? 'text-yellow-500'
+                      : 'text-blue-500'
+                  }`} />
+                  <p className="text-sm">{alert.message}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5" />
+              Recent Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-full">
+                  <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <p className="font-medium">Medical record updated</p>
+                  <p className="text-sm text-muted-foreground">Dr. Smith updated Emma Thompson's records</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-full">
+                  <UserPlus className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="font-medium">New patient registered</p>
+                  <p className="text-sm text-muted-foreground">James Wilson completed registration</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-full">
+                  <Calendar className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="font-medium">Appointment rescheduled</p>
+                  <p className="text-sm text-muted-foreground">Sarah Johnson rescheduled to next week</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Quick Actions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer">
+                <Calendar className="h-6 w-6 mb-2 text-primary" />
+                <h3 className="font-medium">Schedule Appointment</h3>
+                <p className="text-sm text-muted-foreground">Book a new patient visit</p>
+              </div>
+              <div className="p-4 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer">
+                <UserPlus className="h-6 w-6 mb-2 text-primary" />
+                <h3 className="font-medium">Add Patient</h3>
+                <p className="text-sm text-muted-foreground">Register a new patient</p>
+              </div>
+              <div className="p-4 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer">
+                <FileText className="h-6 w-6 mb-2 text-primary" />
+                <h3 className="font-medium">Create Record</h3>
+                <p className="text-sm text-muted-foreground">Add medical record</p>
+              </div>
+              <div className="p-4 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer">
+                <DollarSign className="h-6 w-6 mb-2 text-primary" />
+                <h3 className="font-medium">Create Invoice</h3>
+                <p className="text-sm text-muted-foreground">Generate new invoice</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

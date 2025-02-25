@@ -14,14 +14,16 @@ import { Search } from 'lucide-react';
 import { NewMedicalRecordDialog } from '@/components/modals/new-medical-record-dialog';
 import { MedicalRecordDetailsDialog } from '@/components/modals/medical-record-details-dialog';
 import { Badge } from '@/components/ui/badge';
+import { cn, typeVariants, statusVariants } from '@/lib/utils';
 
 // Sample medical records data
 const initialRecords = [
   {
     id: 1,
     patient: "John Doe",
+    patientDateOfBirth: "1980-05-15",
     date: "2024-03-15",
-    type: "checkup",
+    type: "consultation",
     doctor: "Dr. Smith",
     status: "completed",
     symptoms: "<p>Patient reports persistent headaches and fatigue.</p>",
@@ -51,6 +53,7 @@ const initialRecords = [
   {
     id: 2,
     patient: "Sarah Johnson",
+    patientDateOfBirth: "1992-08-23",
     date: "2024-03-14",
     type: "followup",
     doctor: "Dr. Chen",
@@ -77,8 +80,9 @@ const initialRecords = [
   {
     id: 3,
     patient: "Michael Chen",
+    patientDateOfBirth: "1975-11-30",
     date: "2024-03-13",
-    type: "emergency",
+    type: "procedure",
     doctor: "Dr. Rodriguez",
     status: "completed",
     symptoms: "<p>Severe chest pain and shortness of breath. Patient reports onset during exercise.</p>",
@@ -102,19 +106,6 @@ const initialRecords = [
   }
 ];
 
-const statusColors = {
-  completed: "success",
-  pending: "warning",
-  cancelled: "destructive"
-} as const;
-
-const typeColors = {
-  checkup: "default",
-  followup: "secondary",
-  emergency: "destructive",
-  consultation: "primary"
-} as const;
-
 export function MedicalRecords() {
   const { t } = useTranslation();
   const [records, setRecords] = useState(initialRecords);
@@ -122,7 +113,7 @@ export function MedicalRecords() {
   const [detailsOpen, setDetailsOpen] = useState(false);
 
   const handleRowClick = (record: typeof records[0]) => {
-    setSelectedRecord(record);
+    setSelectedRecord({ ...record });
     setDetailsOpen(true);
   };
 
@@ -132,6 +123,7 @@ export function MedicalRecords() {
         record.id === updatedRecord.id ? updatedRecord : record
       )
     );
+    setSelectedRecord(updatedRecord);
   };
 
   return (
@@ -155,7 +147,6 @@ export function MedicalRecords() {
               <TableHead>{t('medicalRecords.patient')}</TableHead>
               <TableHead>{t('medicalRecords.date')}</TableHead>
               <TableHead>{t('medicalRecords.type')}</TableHead>
-              <TableHead>{t('medicalRecords.doctor')}</TableHead>
               <TableHead>Vitals</TableHead>
               <TableHead>{t('medicalRecords.status')}</TableHead>
             </TableRow>
@@ -172,11 +163,10 @@ export function MedicalRecords() {
                 </TableCell>
                 <TableCell>{record.date}</TableCell>
                 <TableCell>
-                  <Badge variant={typeColors[record.type as keyof typeof typeColors]}>
+                  <Badge className={cn("font-medium", typeVariants[record.type as keyof typeof typeVariants])}>
                     {t(`medicalRecords.type${record.type.charAt(0).toUpperCase() + record.type.slice(1)}`)}
                   </Badge>
                 </TableCell>
-                <TableCell>{record.doctor}</TableCell>
                 <TableCell>
                   <div className="text-sm">
                     <span className="text-muted-foreground">BP:</span> {record.vitals.bloodPressure}
@@ -185,7 +175,7 @@ export function MedicalRecords() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={statusColors[record.status as keyof typeof statusColors]}>
+                  <Badge className={cn("font-medium", statusVariants[record.status as keyof typeof statusVariants])}>
                     {t(`medicalRecords.status${record.status.charAt(0).toUpperCase() + record.status.slice(1)}`)}
                   </Badge>
                 </TableCell>

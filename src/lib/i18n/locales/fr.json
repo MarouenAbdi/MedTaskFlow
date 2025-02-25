@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "TheMedPilot"
+    "name": "MedTaskFlow"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -19,6 +19,12 @@
     "dark": "Sombre",
     "system": "Système"
   },
+  "settings": {
+    "description": "Gérez vos préférences et paramètres d'application.",
+    "themeDescription": "Choisissez votre thème de couleur préféré pour l'application.",
+    "languageDescription": "Sélectionnez votre langue préférée pour l'interface.",
+    "selectLanguage": "Langue de l'interface"
+  },
   "languages": {
     "en": "Anglais",
     "fr": "Français",
@@ -32,13 +38,20 @@
     "email": "Email",
     "password": "Mot de passe",
     "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "fullName": "Nom complet",
+    "fullNamePlaceholder": "Jean Dupont",
+    "createAccount": "Créer un compte",
+    "signUpPrompt": "Entrez vos informations pour créer votre compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
     "continueWith": "Ou continuer avec",
     "google": "Google",
     "terms": "En continuant, vous acceptez nos",
     "termsLink": "Conditions d'utilisation",
     "and": "et",
     "privacyLink": "Politique de confidentialité",
-    "testimonial": "TheMedPilot a révolutionné la façon dont nous gérons notre cabinet médical, nous permettant de nous concentrer sur l'essentiel – nos patients."
+    "testimonial": "MedTaskFlow a révolutionné la façon dont nous gérons notre cabinet médical, nous permettant de nous concentrer sur l'essentiel – nos patients."
   },
   "dashboard": {
     "totalAppointments": "Total des rendez-vous",
@@ -76,8 +89,12 @@
     "lastVisit": "Dernière visite",
     "status": "Statut",
     "statusActive": "Actif",
+    "statusInactive": "Inactif",
     "new": "Nouveau Patient",
     "save": "Enregistrer le patient",
+    "details": "Détails du patient",
+    "detailsDescription": "Voir et modifier les informations du patient",
+    "changePhoto": "Changer la photo",
     "description": "Ajouter un nouveau patient au système. Cliquez sur enregistrer une fois terminé.",
     "namePlaceholder": "Jean Dupont",
     "email": "Email",
@@ -96,20 +113,23 @@
   "medicalRecords": {
     "patient": "Patient",
     "date": "Date",
-    "type": "Type",
     "doctor": "Médecin",
+    "type": "Type",
     "status": "Statut",
-    "typeCheckup": "Contrôle général",
+    "typeConsultation": "Consultation",
+    "typeExamination": "Examen",
+    "typeProcedure": "Procédure",
+    "typeTest": "Résultats d'analyses",
+    "typeFollowup": "Suivi",
+    "statusNotStarted": "Non commencé",
+    "statusOnHold": "En attente",
+    "statusPending": "En cours",
     "statusCompleted": "Terminé",
     "new": "Nouveau Dossier Médical",
     "save": "Enregistrer le dossier",
     "description": "Créer un nouveau dossier médical. Cliquez sur enregistrer une fois terminé.",
     "selectType": "Sélectionner le type de dossier",
-    "typeConsultation": "Consultation",
-    "typeExamination": "Examen",
-    "typeProcedure": "Procédure",
-    "typeTest": "Résultats de tests",
-    "typeFollowup": "Suivi",
+    "selectDoctor": "Sélectionner le médecin",
     "doctorPlaceholder": "Dr. Martin",
     "symptoms": "Symptômes",
     "symptomsPlaceholder": "Symptômes et plaintes du patient...",
@@ -117,7 +137,10 @@
     "diagnosisPlaceholder": "Diagnostic clinique...",
     "treatment": "Plan de traitement",
     "treatmentPlaceholder": "Traitement et médicaments prescrits...",
-    "attachments": "Pièces jointes"
+    "attachments": "Pièces jointes",
+    "export": "Exporter en PDF",
+    "exportSuccess": "Dossier médical exporté avec succès",
+    "exportError": "Erreur lors de l'exportation du dossier médical"
   },
   "invoices": {
     "number": "Facture #",
@@ -140,10 +163,10 @@
     "dueDate": "Date d'échéance",
     "paymentMethod": "Mode de paiement",
     "selectPaymentMethod": "Sélectionner le mode de paiement",
-    "paymentCard": "Carte de crédit",
+    "paymentCreditCard": "Carte de crédit",
     "paymentCash": "Espèces",
     "paymentInsurance": "Assurance",
-    "paymentBank": "Virement bancaire"
+    "paymentBankTransfer": "Virement bancaire"
   },
   "common": {
     "new": "Nouveau",
@@ -152,6 +175,10 @@
     "search": "Rechercher",
     "noData": "Aucune donnée disponible",
     "notes": "Notes",
-    "notesPlaceholder": "Notes supplémentaires..."
+    "notesPlaceholder": "Notes supplémentaires...",
+    "unsavedChanges": "Modifications non enregistrées",
+    "unsavedChangesDescription": "Vous avez des modifications non enregistrées. Voulez-vous continuer à modifier ou abandonner vos modifications ?",
+    "continueEditing": "Continuer à modifier",
+    "discardChanges": "Abandonner les modifications"
   }
 }
