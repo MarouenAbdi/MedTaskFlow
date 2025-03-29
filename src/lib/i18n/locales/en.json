@@ -151,6 +151,7 @@
     "statusPaid": "Paid",
     "statusProcessing": "Processing",
     "statusWaiting": "Waiting",
+    "statusCancelled": "Cancelled",
     "new": "New Invoice",
     "save": "Save Invoice",
     "description": "Create a new invoice. Click save when you're done.",
@@ -170,7 +171,9 @@
     "paymentBankTransfer": "Bank Transfer",
     "generateInvoice": "Generate Invoice",
     "generateSuccess": "Invoice generated successfully",
-    "generateError": "Error generating invoice"
+    "generateError": "Error generating invoice",
+    "updateStatus": "Update Status",
+    "statusUpdated": "Invoice status updated successfully"
   },
   "common": {
     "new": "New",

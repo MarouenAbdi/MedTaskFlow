@@ -29,7 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useForm } from "react-hook-form";
 import { Plus, Trash2 } from 'lucide-react';
-import { cn, invoiceStatusVariants } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface InvoiceFormValues {
@@ -84,6 +84,22 @@ export function NewInvoiceDialog({
 
   const items = form.watch('items');
   const status = form.watch('status');
+
+  // Helper function to determine badge variant based on status
+  const getStatusBadgeVariant = (status: string) => {
+    switch(status) {
+      case 'paid':
+        return 'success';
+      case 'processing':
+        return 'warning';
+      case 'waiting':
+        return 'secondary';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'secondary';
+    }
+  };
 
   const calculateTotal = (items: InvoiceItem[]) => {
     return items.reduce((sum, item) => sum + item.total, 0);
@@ -148,7 +164,14 @@ export function NewInvoiceDialog({
       setIsOpen(newOpen);
     }
     if (!newOpen) {
-      form.reset();
+      form.reset({
+        number: `INV-${String(Date.now()).slice(-6)}`,
+        patient: "",
+        date: new Date().toISOString().split('T')[0],
+        status: "waiting",
+        items: [{ description: "", quantity: 1, unitPrice: 0, total: 0 }],
+        paymentMethod: ""
+      });
     }
   };
 
@@ -159,8 +182,8 @@ export function NewInvoiceDialog({
           <Button>{t('invoices.new')}</Button>
         </DialogTrigger>
       )}
-      <DialogContent className="max-w-4xl h-[90vh] p-0 flex flex-col">
-        <DialogHeader className="px-6 py-4 border-b">
+      <DialogContent className="max-w-4xl h-[90vh] overflow-hidden p-0 flex flex-col">
+        <DialogHeader className="px-6 py-4 border-b flex-shrink-0">
           <div className="flex flex-col space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -176,14 +199,48 @@ export function NewInvoiceDialog({
               <div className="text-sm text-muted-foreground">
                 Issue Date: {form.watch('date')}
               </div>
-              <Badge 
-                className={cn(
-                  "font-medium px-3 py-1",
-                  invoiceStatusVariants[status as keyof typeof invoiceStatusVariants]
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <Select 
+                    value={field.value} 
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue>
+                        <Badge 
+                          variant={getStatusBadgeVariant(status)}
+                        >
+                          {t(`invoices.status${status.charAt(0).toUpperCase() + status.slice(1)}`)}
+                        </Badge>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="waiting">
+                        <Badge variant="secondary">
+                          {t('invoices.statusWaiting')}
+                        </Badge>
+                      </SelectItem>
+                      <SelectItem value="processing">
+                        <Badge variant="warning">
+                          {t('invoices.statusProcessing')}
+                        </Badge>
+                      </SelectItem>
+                      <SelectItem value="paid">
+                        <Badge variant="success">
+                          {t('invoices.statusPaid')}
+                        </Badge>
+                      </SelectItem>
+                      <SelectItem value="cancelled">
+                        <Badge variant="destructive">
+                          {t('invoices.statusCancelled')}
+                        </Badge>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 )}
-              >
-                {t(`invoices.status${status.charAt(0).toUpperCase() + status.slice(1)}`)}
-              </Badge>
+              />
             </div>
           </div>
         </DialogHeader>
@@ -208,22 +265,13 @@ export function NewInvoiceDialog({
                   />
                   <FormField
                     control={form.control}
-                    name="status"
+                    name="date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('invoices.status')}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="waiting">{t('invoices.statusWaiting')}</SelectItem>
-                            <SelectItem value="processing">{t('invoices.statusProcessing')}</SelectItem>
-                            <SelectItem value="paid">{t('invoices.statusPaid')}</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <FormLabel>{t('invoices.date')}</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

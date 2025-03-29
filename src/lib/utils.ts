@@ -26,5 +26,6 @@ export const statusVariants = {
 export const invoiceStatusVariants = {
   paid: "bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/20 dark:text-emerald-500/80",
   processing: "bg-blue-500/10 text-blue-500 dark:bg-blue-500/20 dark:text-blue-500/80",
-  waiting: "bg-orange-500/10 text-orange-500 dark:bg-orange-500/20 dark:text-orange-500/80"
+  waiting: "bg-orange-500/10 text-orange-500 dark:bg-orange-500/20 dark:text-orange-500/80",
+  cancelled: "bg-gray-500/10 text-gray-500 dark:bg-gray-500/20 dark:text-gray-500/80"
 } as const;

@@ -41,12 +41,21 @@ const initialRecords = [
       {
         name: "blood_test_results.pdf",
         type: "pdf",
-        size: "1.2 MB"
+        size: "1.2 MB",
+        url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
       },
       {
         name: "chest_xray.jpg",
         type: "image",
-        size: "2.5 MB"
+        size: "2.5 MB",
+        url: "https://images.unsplash.com/photo-1516069677018-378971e2d685?w=800&h=600&fit=crop"
+      }
+    ],
+    transcriptions: [
+      {
+        id: 1,
+        date: "2024-03-15T10:30:00",
+        content: "<h3>Initial Consultation - March 15, 2024</h3><p>Patient describes headaches as 'throbbing' and concentrated in the frontal area. Reports increased stress at work and poor sleep patterns. No previous history of migraines. Physical examination shows tension in neck muscles.</p>"
       }
     ]
   },
@@ -73,7 +82,14 @@ const initialRecords = [
       {
         name: "surgical_notes.pdf",
         type: "pdf",
-        size: "0.8 MB"
+        size: "0.8 MB",
+        url: "https://www.africau.edu/images/default/sample.pdf"
+      },
+      {
+        name: "incision_photo.jpg",
+        type: "image",
+        size: "1.7 MB",
+        url: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop"
       }
     ]
   },
@@ -100,7 +116,14 @@ const initialRecords = [
       {
         name: "ecg_results.pdf",
         type: "pdf",
-        size: "1.5 MB"
+        size: "1.5 MB",
+        url: "https://www.clickdimensions.com/links/TestPDFfile.pdf"
+      },
+      {
+        name: "mri_scan.jpg",
+        type: "image",
+        size: "3.2 MB",
+        url: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&h=600&fit=crop"
       }
     ]
   }
@@ -111,6 +134,7 @@ export function MedicalRecords() {
   const [records, setRecords] = useState(initialRecords);
   const [selectedRecord, setSelectedRecord] = useState<typeof records[0] | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleRowClick = (record: typeof records[0]) => {
     setSelectedRecord({ ...record });
@@ -126,13 +150,42 @@ export function MedicalRecords() {
     setSelectedRecord(updatedRecord);
   };
 
+  const filteredRecords = searchQuery 
+    ? records.filter(record => 
+        record.patient.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        record.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        record.status.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : records;
+
+  // Helper function to determine badge variant based on status
+  const getStatusBadgeVariant = (status: string) => {
+    switch(status) {
+      case 'completed':
+        return 'success';
+      case 'notstarted':
+        return 'secondary';
+      case 'pending':
+        return 'warning';
+      case 'onhold':
+        return 'destructive';
+      default:
+        return 'secondary';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">{t('nav.medicalRecords')}</h2>
         <div className="flex items-center gap-4">
           <div className="flex w-full max-w-sm items-center space-x-2">
-            <Input type="search" placeholder={t('common.search')} />
+            <Input 
+              type="search" 
+              placeholder={t('common.search')} 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <Button type="submit" size="icon">
               <Search className="h-4 w-4" />
             </Button>
@@ -149,10 +202,12 @@ export function MedicalRecords() {
               <TableHead>{t('medicalRecords.type')}</TableHead>
               <TableHead>Vitals</TableHead>
               <TableHead>{t('medicalRecords.status')}</TableHead>
+              <TableHead>Attachments</TableHead>
+              <TableHead>Transcriptions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {records.map((record) => (
+            {filteredRecords.map((record) => (
               <TableRow 
                 key={record.id}
                 className="cursor-pointer group hover:bg-accent/50 transition-colors"
@@ -175,9 +230,27 @@ export function MedicalRecords() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge className={cn("font-medium", statusVariants[record.status as keyof typeof statusVariants])}>
+                  <Badge variant={getStatusBadgeVariant(record.status)}>
                     {t(`medicalRecords.status${record.status.charAt(0).toUpperCase() + record.status.slice(1)}`)}
                   </Badge>
+                </TableCell>
+                <TableCell>
+                  {record.attachments && record.attachments.length > 0 ? (
+                    <Badge variant="outline" className="bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 border-purple-200 dark:border-purple-800">
+                      {record.attachments.length} {record.attachments.length === 1 ? 'File' : 'Files'}
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">None</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {record.transcriptions && record.transcriptions.length > 0 ? (
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 border-blue-200 dark:border-blue-800">
+                      {record.transcriptions.length} {record.transcriptions.length === 1 ? 'Session' : 'Sessions'}
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">None</span>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

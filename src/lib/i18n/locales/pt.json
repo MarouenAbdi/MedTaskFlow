@@ -149,6 +149,9 @@
     "amount": "Valor",
     "status": "Status",
     "statusPaid": "Pago",
+    "statusProcessing": "Em processamento",
+    "statusWaiting": "Aguardando",
+    "statusCancelled": "Cancelada",
     "new": "Nova Fatura",
     "save": "Salvar Fatura",
     "description": "Criar uma nova fatura. Clique em salvar quando terminar.",
@@ -160,13 +163,8 @@
     "serviceProcedure": "Procedimento",
     "serviceMedication": "Medicação",
     "amountPlaceholder": "0,00",
-    "dueDate": "Data de vencimento",
-    "paymentMethod": "Método de pagamento",
-    "selectPaymentMethod": "Selecionar método de pagamento",
-    "paymentCreditCard": "Cartão de crédito",
-    "paymentCash": "Dinheiro",
-    "paymentInsurance": "Seguro",
-    "paymentBankTransfer": "Transferência bancária"
+    "updateStatus": "Atualizar status",
+    "statusUpdated": "Status da fatura atualizado com sucesso"
   },
   "common": {
     "new": "Novo",

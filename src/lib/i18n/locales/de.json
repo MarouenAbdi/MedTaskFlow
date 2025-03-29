@@ -149,6 +149,9 @@
     "amount": "Betrag",
     "status": "Status",
     "statusPaid": "Bezahlt",
+    "statusProcessing": "In Bearbeitung",
+    "statusWaiting": "Wartend",
+    "statusCancelled": "Storniert",
     "new": "Neue Rechnung",
     "save": "Rechnung speichern",
     "description": "Erstellen Sie eine neue Rechnung. Klicken Sie auf Speichern, wenn Sie fertig sind.",
@@ -160,13 +163,8 @@
     "serviceProcedure": "Verfahren",
     "serviceMedication": "Medikation",
     "amountPlaceholder": "0,00",
-    "dueDate": "Fälligkeitsdatum",
-    "paymentMethod": "Zahlungsmethode",
-    "selectPaymentMethod": "Zahlungsmethode auswählen",
-    "paymentCreditCard": "Kreditkarte",
-    "paymentCash": "Bargeld",
-    "paymentInsurance": "Versicherung",
-    "paymentBankTransfer": "Banküberweisung"
+    "updateStatus": "Status aktualisieren",
+    "statusUpdated": "Rechnungsstatus erfolgreich aktualisiert"
   },
   "common": {
     "new": "Neu",

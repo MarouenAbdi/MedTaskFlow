@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { NewInvoiceDialog } from '@/components/modals/new-invoice-dialog';
 import { InvoiceDetailsDialog } from '@/components/modals/invoice-details-dialog';
 import { cn, invoiceStatusVariants } from '@/lib/utils';
+import { toast } from 'sonner';
 
 // Sample invoices data
 const initialInvoices = [
@@ -110,11 +111,44 @@ export function Invoices() {
     setDetailsOpen(true);
   };
 
+  const handleStatusChange = (newStatus: string, invoiceId: number) => {
+    setInvoices(prevInvoices =>
+      prevInvoices.map(invoice =>
+        invoice.id === invoiceId
+          ? { ...invoice, status: newStatus }
+          : invoice
+      )
+    );
+    
+    // Also update the selected invoice if it's currently being viewed
+    if (selectedInvoice?.id === invoiceId) {
+      setSelectedInvoice(prev => prev ? { ...prev, status: newStatus } : null);
+    }
+    
+    toast.success(t('invoices.statusUpdated'));
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
     }).format(amount);
+  };
+
+  // Helper function to determine badge variant based on status
+  const getStatusBadgeVariant = (status: string) => {
+    switch(status) {
+      case 'paid':
+        return 'success';
+      case 'processing':
+        return 'warning';
+      case 'waiting':
+        return 'secondary';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'secondary';
+    }
   };
 
   return (
@@ -148,12 +182,7 @@ export function Invoices() {
                 <TableCell>{invoice.date}</TableCell>
                 <TableCell className="text-right">{formatCurrency(invoice.amount)}</TableCell>
                 <TableCell>
-                  <Badge 
-                    className={cn(
-                      "font-medium",
-                      invoiceStatusVariants[invoice.status as keyof typeof invoiceStatusVariants]
-                    )}
-                  >
+                  <Badge variant={getStatusBadgeVariant(invoice.status)}>
                     {t(`invoices.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`)}
                   </Badge>
                 </TableCell>
@@ -168,6 +197,7 @@ export function Invoices() {
           invoice={selectedInvoice}
           open={detailsOpen}
           onOpenChange={setDetailsOpen}
+          onStatusChange={handleStatusChange}
         />
       )}
     </div>

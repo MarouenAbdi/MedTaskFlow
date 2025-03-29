@@ -11,13 +11,6 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { NewPatientDialog } from '@/components/modals/new-patient-dialog';
 import { PatientDetailsDialog } from '@/components/modals/patient-details-dialog';
 import { User } from 'lucide-react';
@@ -153,11 +146,11 @@ export function Patients() {
             {patients.map((patient) => (
               <TableRow 
                 key={patient.id}
-                className="cursor-pointer group"
+                className="cursor-pointer group hover:bg-accent/50 transition-colors"
+                onClick={() => handleRowClick(patient)}
               >
                 <TableCell 
                   className="font-medium"
-                  onClick={() => handleRowClick(patient)}
                 >
                   <div className="flex items-center gap-3">
                     <Avatar>
@@ -174,40 +167,19 @@ export function Patients() {
                     </span>
                   </div>
                 </TableCell>
-                <TableCell onClick={() => handleRowClick(patient)}>
+                <TableCell>
                   {patient.age}
                 </TableCell>
-                <TableCell onClick={() => handleRowClick(patient)}>
+                <TableCell>
                   {patient.contact}
                 </TableCell>
-                <TableCell onClick={() => handleRowClick(patient)}>
+                <TableCell>
                   {patient.lastVisit}
                 </TableCell>
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <Select
-                    value={patient.status}
-                    onValueChange={(value) => handleStatusChange(value, patient.id)}
-                  >
-                    <SelectTrigger className="w-[130px]">
-                      <SelectValue>
-                        <Badge variant={patient.status === 'active' ? 'default' : 'secondary'}>
-                          {t(`patients.status${patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}`)}
-                        </Badge>
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">
-                        <Badge variant="default">
-                          {t('patients.statusActive')}
-                        </Badge>
-                      </SelectItem>
-                      <SelectItem value="inactive">
-                        <Badge variant="secondary">
-                          {t('patients.statusInactive')}
-                        </Badge>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                <TableCell>
+                  <Badge variant={patient.status === 'active' ? 'success' : 'destructive'}>
+                    {t(`patients.status${patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}`)}
+                  </Badge>
                 </TableCell>
               </TableRow>
             ))}
@@ -221,6 +193,7 @@ export function Patients() {
           open={detailsOpen}
           onOpenChange={setDetailsOpen}
           onSave={handleSavePatient}
+          onStatusChange={handleStatusChange}
         />
       )}
     </div>

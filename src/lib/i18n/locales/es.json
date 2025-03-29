@@ -149,6 +149,9 @@
     "amount": "Importe",
     "status": "Estado",
     "statusPaid": "Pagado",
+    "statusProcessing": "En proceso",
+    "statusWaiting": "En espera",
+    "statusCancelled": "Cancelada",
     "new": "Nueva Factura",
     "save": "Guardar Factura",
     "description": "Crear una nueva factura. Haga clic en guardar cuando termine.",
@@ -160,13 +163,8 @@
     "serviceProcedure": "Procedimiento",
     "serviceMedication": "Medicación",
     "amountPlaceholder": "0,00",
-    "dueDate": "Fecha de vencimiento",
-    "paymentMethod": "Método de pago",
-    "selectPaymentMethod": "Seleccionar método de pago",
-    "paymentCreditCard": "Tarjeta de crédito",
-    "paymentCash": "Efectivo",
-    "paymentInsurance": "Seguro",
-    "paymentBankTransfer": "Transferencia bancaria"
+    "updateStatus": "Actualizar estado",
+    "statusUpdated": "Estado de la factura actualizado con éxito"
   },
   "common": {
     "new": "Nuevo",

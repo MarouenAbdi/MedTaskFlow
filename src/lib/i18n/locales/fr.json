@@ -149,6 +149,9 @@
     "amount": "Montant",
     "status": "Statut",
     "statusPaid": "Payé",
+    "statusProcessing": "En traitement",
+    "statusWaiting": "En attente",
+    "statusCancelled": "Annulée",
     "new": "Nouvelle Facture",
     "save": "Enregistrer la facture",
     "description": "Créer une nouvelle facture. Cliquez sur enregistrer une fois terminé.",
@@ -160,13 +163,14 @@
     "serviceProcedure": "Procédure",
     "serviceMedication": "Médicament",
     "amountPlaceholder": "0,00",
-    "dueDate": "Date d'échéance",
     "paymentMethod": "Mode de paiement",
     "selectPaymentMethod": "Sélectionner le mode de paiement",
     "paymentCreditCard": "Carte de crédit",
     "paymentCash": "Espèces",
     "paymentInsurance": "Assurance",
-    "paymentBankTransfer": "Virement bancaire"
+    "paymentBankTransfer": "Virement bancaire",
+    "updateStatus": "Modifier le statut",
+    "statusUpdated": "Statut de la facture mis à jour avec succès"
   },
   "common": {
     "new": "Nouveau",

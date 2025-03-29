@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,14 @@ import { Separator } from "@/components/ui/separator";
 import { File as FilePdf } from "lucide-react";
 import { toast } from "sonner";
 import html2pdf from 'html2pdf.js';
-import { cn, invoiceStatusVariants } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Invoice {
   id: number;
@@ -39,12 +46,14 @@ interface InvoiceDetailsDialogProps {
   invoice: Invoice;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onStatusChange: (status: string, id: number) => void;
 }
 
 export function InvoiceDetailsDialog({
   invoice,
   open,
   onOpenChange,
+  onStatusChange,
 }: InvoiceDetailsDialogProps) {
   const { t } = useTranslation();
   const [isExporting, setIsExporting] = useState(false);
@@ -99,10 +108,30 @@ export function InvoiceDetailsDialog({
     }
   };
 
+  const handleStatusChange = (status: string) => {
+    onStatusChange(status, invoice.id);
+  };
+
+  // Helper function to determine badge variant based on status
+  const getStatusBadgeVariant = (status: string) => {
+    switch(status) {
+      case 'paid':
+        return 'success';
+      case 'processing':
+        return 'warning';
+      case 'waiting':
+        return 'secondary';
+      case 'cancelled':
+        return 'destructive';
+      default:
+        return 'secondary';
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[90vh] p-0 flex flex-col">
-        <DialogHeader className="px-6 py-4 border-b">
+      <DialogContent className="max-w-4xl h-[90vh] overflow-hidden p-0 flex flex-col">
+        <DialogHeader className="px-6 py-4 border-b flex-shrink-0">
           <div className="flex flex-col space-y-4">
             <div className="flex items-center justify-between">
               <div>
@@ -119,14 +148,42 @@ export function InvoiceDetailsDialog({
                 Issue Date: {formatDate(invoice.date)}
               </div>
               <div className="flex items-center gap-4">
-                <Badge 
-                  className={cn(
-                    "font-medium px-3 py-1",
-                    invoiceStatusVariants[invoice.status as keyof typeof invoiceStatusVariants]
-                  )}
+                <Select
+                  value={invoice.status}
+                  onValueChange={handleStatusChange}
                 >
-                  {t(`invoices.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`)}
-                </Badge>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue>
+                      <Badge 
+                        variant={getStatusBadgeVariant(invoice.status)}
+                      >
+                        {t(`invoices.status${invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}`)}
+                      </Badge>
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="waiting">
+                      <Badge variant="secondary">
+                        {t('invoices.statusWaiting')}
+                      </Badge>
+                    </SelectItem>
+                    <SelectItem value="processing">
+                      <Badge variant="warning">
+                        {t('invoices.statusProcessing')}
+                      </Badge>
+                    </SelectItem>
+                    <SelectItem value="paid">
+                      <Badge variant="success">
+                        {t('invoices.statusPaid')}
+                      </Badge>
+                    </SelectItem>
+                    <SelectItem value="cancelled">
+                      <Badge variant="destructive">
+                        {t('invoices.statusCancelled')}
+                      </Badge>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
                 <Button
                   variant="outline"
                   size="sm"
@@ -174,70 +231,68 @@ export function InvoiceDetailsDialog({
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="px-6 py-4" id="invoice-content">
-            <div className="space-y-6">
-              <div className="border rounded-lg">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-4">Description</th>
-                      <th className="text-right p-4">Quantity</th>
-                      <th className="text-right p-4">Unit Price</th>
-                      <th className="text-right p-4">Total</th>
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="space-y-6" id="invoice-content">
+            <div className="border rounded-lg">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-4">Description</th>
+                    <th className="text-right p-4">Quantity</th>
+                    <th className="text-right p-4">Unit Price</th>
+                    <th className="text-right p-4">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoice.items.map((item, index) => (
+                    <tr key={index} className="border-b last:border-0">
+                      <td className="p-4">{item.description}</td>
+                      <td className="text-right p-4">{item.quantity}</td>
+                      <td className="text-right p-4">{formatCurrency(item.unitPrice)}</td>
+                      <td className="text-right p-4">{formatCurrency(item.total)}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {invoice.items.map((item, index) => (
-                      <tr key={index} className="border-b last:border-0">
-                        <td className="p-4">{item.description}</td>
-                        <td className="text-right p-4">{item.quantity}</td>
-                        <td className="text-right p-4">{formatCurrency(item.unitPrice)}</td>
-                        <td className="text-right p-4">{formatCurrency(item.total)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-              <div className="flex justify-end">
-                <div className="w-72 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>{formatCurrency(invoice.subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span>{formatCurrency(invoice.tax)}</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between font-bold">
-                    <span>Total</span>
-                    <span>{formatCurrency(invoice.total)}</span>
-                  </div>
+            <div className="flex justify-end">
+              <div className="w-72 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>{formatCurrency(invoice.subtotal)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tax</span>
+                  <span>{formatCurrency(invoice.tax)}</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between font-bold">
+                  <span>Total</span>
+                  <span>{formatCurrency(invoice.total)}</span>
                 </div>
               </div>
-
-              {(invoice.notes || invoice.paymentMethod) && (
-                <>
-                  <Separator />
-                  <div className="space-y-4">
-                    {invoice.paymentMethod && (
-                      <div>
-                        <h4 className="font-medium mb-1">Payment Method</h4>
-                        <p className="text-muted-foreground">{invoice.paymentMethod}</p>
-                      </div>
-                    )}
-                    {invoice.notes && (
-                      <div>
-                        <h4 className="font-medium mb-1">Notes</h4>
-                        <p className="text-muted-foreground">{invoice.notes}</p>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
             </div>
+
+            {(invoice.notes || invoice.paymentMethod) && (
+              <>
+                <Separator />
+                <div className="space-y-4">
+                  {invoice.paymentMethod && (
+                    <div>
+                      <h4 className="font-medium mb-1">Payment Method</h4>
+                      <p className="text-muted-foreground">{invoice.paymentMethod}</p>
+                    </div>
+                  )}
+                  {invoice.notes && (
+                    <div>
+                      <h4 className="font-medium mb-1">Notes</h4>
+                      <p className="text-muted-foreground">{invoice.notes}</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </DialogContent>

@@ -71,42 +71,48 @@
 
 /* Dialog styles */
 .dialog-content {
-  @apply max-h-[90vh] p-0;
+  @apply max-h-[90vh] p-0 flex flex-col;
 }
 
-.dialog-content > div {
-  @apply h-full;
+.dialog-header {
+  @apply px-6 py-4 border-b flex-shrink-0;
 }
 
 .dialog-body {
-  @apply p-6 overflow-y-auto;
+  @apply flex-1 overflow-y-auto p-6;
+}
+
+.dialog-footer {
+  @apply px-6 py-4 border-t flex-shrink-0;
+}
+
+/* Modal body wrapper */
+.modal-body {
+  @apply flex-1 overflow-y-auto;
 }
 
 /* Scrollbar styles */
-.overflow-y-auto {
+.overflow-y-auto, .overflow-auto {
   scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
 }
 
-.overflow-y-auto:hover {
-  scrollbar-color: hsl(var(--muted-foreground)) transparent;
-}
-
-.overflow-y-auto::-webkit-scrollbar {
+.overflow-y-auto::-webkit-scrollbar, .overflow-auto::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
-.overflow-y-auto::-webkit-scrollbar-track {
+.overflow-y-auto::-webkit-scrollbar-track, .overflow-auto::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: transparent;
+.overflow-y-auto::-webkit-scrollbar-thumb, .overflow-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
   border-radius: 3px;
 }
 
-.overflow-y-auto:hover::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--muted-foreground));
+.dark .overflow-y-auto::-webkit-scrollbar-thumb, .dark .overflow-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.2);
 }
 
 /* TipTap Editor Styles */

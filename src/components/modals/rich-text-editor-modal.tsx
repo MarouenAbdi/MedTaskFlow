@@ -13,7 +13,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
@@ -166,21 +165,14 @@ export function RichTextEditorModal({
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogTrigger asChild>
-          <Button variant="outline" size="icon" onClick={(e) => {
-            e.stopPropagation();
-            handleOpenChange(true);
-          }}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-[800px] max-h-[90vh]">
-          <DialogHeader>
+        <DialogContent className="max-w-[800px] max-h-[90vh] overflow-hidden p-6">
+          <DialogHeader className="mb-4">
             <DialogTitle>{title}</DialogTitle>
             {description && <DialogDescription>{description}</DialogDescription>}
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-1 items-center border-b pb-4">
+          
+          <div className="space-y-4 overflow-y-auto max-h-[calc(90vh-12rem)]">
+            <div className="flex flex-wrap gap-1 items-center pb-4 border-b">
               <Toggle
                 size="sm"
                 pressed={editor?.isActive('bold')}
@@ -315,11 +307,13 @@ export function RichTextEditorModal({
               </Button>
             </div>
 
-            <div className="min-h-[300px] overflow-y-auto">
+            <div>
               <EditorContent editor={editor} />
             </div>
-
-            <DialogFooter className="flex items-center gap-4 pt-4 border-t">
+          </div>
+          
+          <DialogFooter className="mt-6 pt-4 border-t">
+            <div className="flex items-center gap-4 w-full">
               <div className="text-sm text-muted-foreground mr-auto">
                 {hasUnsavedChanges ? "You have unsaved changes" : "All changes saved"}
               </div>
@@ -332,8 +326,8 @@ export function RichTextEditorModal({
               >
                 Save Changes
               </Button>
-            </DialogFooter>
-          </div>
+            </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
