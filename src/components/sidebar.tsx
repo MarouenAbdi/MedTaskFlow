@@ -101,6 +101,42 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
 				</div>
 			)}
 
+			{/* Logo and App Name Header */}
+			<div
+				className={cn(
+					'flex items-center h-20 px-3 mt-1 mb-6',
+					isCollapsed ? 'justify-center' : 'justify-start gap-2'
+				)}
+			>
+				<div
+					className={cn(
+						'relative flex items-center justify-center',
+						isCollapsed ? 'h-16 w-16' : 'h-10 w-10'
+					)}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="white"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						className="w-full h-full"
+					>
+						<path
+							d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+							fill="#DC2626"
+							stroke="none"
+						/>
+						<path d="M5 12h2l2 4l3-8l3 4h4" stroke="white" />
+					</svg>
+				</div>
+				{!isCollapsed && (
+					<span className="font-bold text-xl text-white">{t('app.name')}</span>
+				)}
+			</div>
+
 			<ScrollArea className="flex-1">
 				<div className="flex flex-col gap-4 p-3">
 					<nav className="grid gap-3">
