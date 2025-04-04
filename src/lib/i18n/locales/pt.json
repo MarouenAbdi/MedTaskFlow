@@ -93,10 +93,10 @@
 		"statusInactive": "Inativo",
 		"new": "Novo Paciente",
 		"save": "Salvar Paciente",
-		"details": "Detalhes do paciente",
-		"detailsDescription": "Ver e editar informações do paciente",
-		"changePhoto": "Alterar foto",
-		"description": "Adicionar um novo paciente ao sistema. Clique em salvar quando terminar.",
+		"details": "Detalhes do Paciente",
+		"detailsDescription": "Visualizar e editar informações do paciente",
+		"changePhoto": "Alterar Foto",
+		"description": "Adicione um novo paciente ao sistema. Clique em salvar quando terminar.",
 		"namePlaceholder": "João Silva",
 		"email": "Email",
 		"emailPlaceholder": "joao@exemplo.com",
@@ -109,7 +109,9 @@
 		"genderFemale": "Feminino",
 		"genderOther": "Outro",
 		"address": "Endereço",
-		"addressPlaceholder": "Rua Principal 123, Cidade, País"
+		"addressPlaceholder": "Rua Principal 123, Cidade, País",
+		"noResults": "Nenhum resultado encontrado",
+		"addNew": "Adicionar novo paciente"
 	},
 	"medicalRecords": {
 		"patient": "Paciente",
@@ -226,6 +228,8 @@
 		"resolvedQueries": "Consultas Resolvidas",
 		"appointmentsScheduled": "Consultas Agendadas",
 		"typeMessage": "Digite uma mensagem...",
+		"voiceInput": "Entrada de Voz",
+		"voiceInputDescription": "Permitir que os usuários interajam com o assistente usando a voz.",
 		"assistants": {
 			"medicalAssistant": {
 				"name": "Assistente Médico",

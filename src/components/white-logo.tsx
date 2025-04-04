@@ -1,12 +1,20 @@
-import { cn } from "@/lib/utils";
-import { HeartPulse } from "lucide-react";
+import { cn } from '@/lib/utils';
 
 interface WhiteLogoProps {
-  className?: string;
+	className?: string;
 }
 
 export function WhiteLogo({ className }: WhiteLogoProps) {
-  return (
-    <HeartPulse className={cn("h-[1.2em] w-[1.2em] text-white", className)} />
-  );
+	return (
+		<div className={cn('relative', className)}>
+			<img
+				src="/assets/avatars/custom/MTF-logo.png"
+				alt="MedTaskFlow Logo"
+				className={cn(
+					'w-full h-full object-contain brightness-0 invert',
+					className
+				)}
+			/>
+		</div>
+	);
 }

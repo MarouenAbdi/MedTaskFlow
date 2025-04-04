@@ -109,7 +109,9 @@
 		"genderFemale": "Féminin",
 		"genderOther": "Autre",
 		"address": "Adresse",
-		"addressPlaceholder": "123 rue Principale, Ville, Pays"
+		"addressPlaceholder": "123 rue Principale, Ville, Pays",
+		"noResults": "Aucun résultat trouvé",
+		"addNew": "Ajouter un nouveau patient"
 	},
 	"medicalRecords": {
 		"patient": "Patient",
@@ -198,6 +200,7 @@
 		"configure": "Configurer",
 		"activate": "Activer",
 		"activated": "Activé",
+		"pricingInfo": "{{price}}/mois abonnement",
 		"capabilities": {
 			"chat": "Chat",
 			"voice": "Vocal",
@@ -205,7 +208,6 @@
 			"medical": "Connaissances Médicales",
 			"administrative": "Administratif"
 		},
-		"pricingInfo": "Abonnement à {{price}}/mois",
 		"chat": "Chat",
 		"settings": "Paramètres",
 		"generalSettings": "Paramètres Généraux",
@@ -232,6 +234,8 @@
 		"resolvedQueries": "Demandes Résolues",
 		"appointmentsScheduled": "Rendez-vous Planifiés",
 		"typeMessage": "Tapez un message...",
+		"voiceInput": "Entrée Vocale",
+		"voiceInputDescription": "Permettre aux utilisateurs d'interagir avec l'assistant par la voix.",
 		"assistants": {
 			"medicalAssistant": {
 				"name": "Assistant Médical",

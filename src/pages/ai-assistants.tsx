@@ -25,8 +25,7 @@ import {
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
-// Forward reference to the component we will create later
-// @ts-expect-error - Component will be created later
+// Removed unused @ts-expect-error directive
 import { AiAssistantDialog } from '@/components/modals/ai-assistant-dialog';
 
 // Assistant types

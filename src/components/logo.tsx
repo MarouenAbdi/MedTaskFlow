@@ -1,12 +1,20 @@
-import { cn } from "@/lib/utils";
-import { HeartPulse } from "lucide-react";
+import { cn } from '@/lib/utils';
 
 interface LogoProps {
-  className?: string;
+	className?: string;
 }
 
 export function Logo({ className }: LogoProps) {
-  return (
-    <HeartPulse className={cn("h-[1.2em] w-[1.2em]", className)} />
-  );
+	return (
+		<div className={cn('relative', className)}>
+			<img
+				src="/assets/avatars/custom/MTF-logo.png"
+				alt="MedTaskFlow Logo"
+				className={cn(
+					'w-full h-full object-contain transition-all duration-200',
+					className
+				)}
+			/>
+		</div>
+	);
 }
