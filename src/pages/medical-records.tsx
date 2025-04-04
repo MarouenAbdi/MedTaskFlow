@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
 	Table,
@@ -10,7 +9,6 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { Search } from 'lucide-react';
 import { NewMedicalRecordDialog } from '@/components/modals/new-medical-record-dialog';
 import { MedicalRecordDetailsDialog } from '@/components/modals/medical-record-details-dialog';
 import { Badge } from '@/components/ui/badge';
@@ -199,9 +197,6 @@ export function MedicalRecords() {
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 						/>
-						<Button type="submit" size="icon">
-							<Search className="h-4 w-4" />
-						</Button>
 					</div>
 					<NewMedicalRecordDialog />
 				</div>

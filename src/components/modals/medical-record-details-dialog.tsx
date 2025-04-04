@@ -11,7 +11,6 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
-	FileText,
 	Download,
 	File as FilePdf,
 	Mic,
@@ -20,6 +19,9 @@ import {
 	Edit,
 	Save,
 	X,
+	Upload,
+	Image,
+	Plus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import html2pdf from 'html2pdf.js';
@@ -34,6 +36,7 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
+	FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
@@ -44,6 +47,19 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Switch } from '@/components/ui/switch';
+import {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuCheckboxItem,
+} from '@/components/ui/dropdown-menu';
 
 interface MedicalRecord {
 	id: number;
@@ -57,6 +73,10 @@ interface MedicalRecord {
 	diagnosis: string;
 	treatment: string;
 	notes: string;
+	showVitals?: boolean;
+	showSymptoms?: boolean;
+	showDiagnosis?: boolean;
+	showTreatment?: boolean;
 	vitals: {
 		bloodPressure: string;
 		heartRate: string;
@@ -101,6 +121,8 @@ export function MedicalRecordDetailsDialog({
 	} | null>(null);
 	const [filePreviewOpen, setFilePreviewOpen] = useState(false);
 	const [isEditMode, setIsEditMode] = useState(false);
+	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+	const [filePreview, setFilePreview] = useState<{ [key: string]: string }>({});
 
 	// Rich text editor states
 	const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -113,6 +135,10 @@ export function MedicalRecordDetailsDialog({
 			doctor: record.doctor,
 			type: record.type,
 			status: record.status,
+			showVitals: record.showVitals ?? false,
+			showSymptoms: record.showSymptoms ?? true,
+			showDiagnosis: record.showDiagnosis ?? true,
+			showTreatment: record.showTreatment ?? true,
 			vitals: {
 				bloodPressure: record.vitals.bloodPressure,
 				heartRate: record.vitals.heartRate,
@@ -130,6 +156,10 @@ export function MedicalRecordDetailsDialog({
 			doctor: record.doctor,
 			type: record.type,
 			status: record.status,
+			showVitals: record.showVitals ?? false,
+			showSymptoms: record.showSymptoms ?? true,
+			showDiagnosis: record.showDiagnosis ?? true,
+			showTreatment: record.showTreatment ?? true,
 			vitals: {
 				bloodPressure: record.vitals.bloodPressure,
 				heartRate: record.vitals.heartRate,
@@ -287,22 +317,23 @@ export function MedicalRecordDetailsDialog({
 	};
 
 	const handleSaveChanges = () => {
-		const formValues = form.getValues();
+		const formData = form.getValues();
 
 		const updatedRecord = {
 			...localRecord,
-			doctor: formValues.doctor,
-			type: formValues.type,
-			status: formValues.status,
-			vitals: {
-				...formValues.vitals,
-			},
+			doctor: formData.doctor,
+			type: formData.type,
+			status: formData.status,
+			showVitals: formData.showVitals,
+			showSymptoms: formData.showSymptoms,
+			showDiagnosis: formData.showDiagnosis,
+			showTreatment: formData.showTreatment,
+			vitals: formData.vitals,
 		};
 
 		setLocalRecord(updatedRecord);
-		onSave(updatedRecord);
 		setIsEditMode(false);
-		toast.success('Medical record updated successfully');
+		onSave(updatedRecord);
 	};
 
 	const handleCancelEdit = () => {
@@ -311,6 +342,10 @@ export function MedicalRecordDetailsDialog({
 			doctor: record.doctor,
 			type: record.type,
 			status: record.status,
+			showVitals: record.showVitals ?? false,
+			showSymptoms: record.showSymptoms ?? true,
+			showDiagnosis: record.showDiagnosis ?? true,
+			showTreatment: record.showTreatment ?? true,
 			vitals: {
 				bloodPressure: record.vitals.bloodPressure,
 				heartRate: record.vitals.heartRate,
@@ -320,6 +355,80 @@ export function MedicalRecordDetailsDialog({
 			},
 		});
 		setLocalRecord(record);
+	};
+
+	const toggleSection = (
+		section: 'showVitals' | 'showSymptoms' | 'showDiagnosis' | 'showTreatment'
+	) => {
+		const currentValue = form.getValues(section);
+		form.setValue(section, !currentValue);
+
+		// Update local record to reflect changes
+		setLocalRecord({
+			...localRecord,
+			[section]: !currentValue,
+		});
+	};
+
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const files = e.target.files;
+		if (files && files.length > 0) {
+			const newFiles: File[] = Array.from(files);
+			setSelectedFiles((prev) => [...prev, ...newFiles]);
+
+			// Generate previews for images
+			newFiles.forEach((file) => {
+				if (file.type.startsWith('image/')) {
+					const reader = new FileReader();
+					reader.onloadend = () => {
+						setFilePreview((prev) => ({
+							...prev,
+							[file.name]: reader.result as string,
+						}));
+					};
+					reader.readAsDataURL(file);
+				}
+			});
+
+			// In a real app, you would upload these files to a server
+			// and update the attachments array
+			const mockAttachments = newFiles.map((file) => ({
+				name: file.name,
+				type: file.type.startsWith('image/') ? 'image' : 'pdf',
+				size: formatFileSize(file.size),
+				url: URL.createObjectURL(file),
+			}));
+
+			setLocalRecord({
+				...localRecord,
+				attachments: [...localRecord.attachments, ...mockAttachments],
+			});
+		}
+	};
+
+	const removeFile = (fileName: string) => {
+		// Remove from attachments in the record
+		setLocalRecord({
+			...localRecord,
+			attachments: localRecord.attachments.filter(
+				(file) => file.name !== fileName
+			),
+		});
+
+		// Remove from UI state
+		setSelectedFiles(selectedFiles.filter((file) => file.name !== fileName));
+		setFilePreview((prev) => {
+			const updated = { ...prev };
+			delete updated[fileName];
+			return updated;
+		});
+	};
+
+	const formatFileSize = (bytes: number) => {
+		if (typeof bytes === 'string') return bytes;
+		if (bytes < 1024) return bytes + ' bytes';
+		else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+		else return (bytes / 1048576).toFixed(1) + ' MB';
 	};
 
 	return (
@@ -356,13 +465,16 @@ export function MedicalRecordDetailsDialog({
 							<div className="flex items-center gap-2">
 								<Badge
 									className={cn(
-										'font-medium px-3 py-1',
+										'font-medium px-3 py-1 hover:opacity-100',
 										typeVariants[localRecord.type as keyof typeof typeVariants]
 									)}
 								>
 									{getTypeTranslation(localRecord.type)}
 								</Badge>
-								<Badge variant={getStatusBadgeVariant(localRecord.status)}>
+								<Badge
+									variant={getStatusBadgeVariant(localRecord.status)}
+									className="hover:opacity-100"
+								>
 									{getStatusTranslation(localRecord.status)}
 								</Badge>
 							</div>
@@ -437,84 +549,6 @@ export function MedicalRecordDetailsDialog({
 						{isEditMode ? (
 							<Form {...form}>
 								<div className="space-y-6">
-									<div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg mb-6">
-										<div>
-											<h4 className="font-medium mb-4">Vitals</h4>
-											<div className="space-y-4 text-sm">
-												<FormField
-													control={form.control}
-													name="vitals.bloodPressure"
-													render={({ field }) => (
-														<FormItem>
-															<FormLabel>Blood Pressure (mmHg)</FormLabel>
-															<FormControl>
-																<Input placeholder="120/80" {...field} />
-															</FormControl>
-															<FormMessage />
-														</FormItem>
-													)}
-												/>
-												<FormField
-													control={form.control}
-													name="vitals.heartRate"
-													render={({ field }) => (
-														<FormItem>
-															<FormLabel>Heart Rate (bpm)</FormLabel>
-															<FormControl>
-																<Input placeholder="70" {...field} />
-															</FormControl>
-															<FormMessage />
-														</FormItem>
-													)}
-												/>
-												<FormField
-													control={form.control}
-													name="vitals.temperature"
-													render={({ field }) => (
-														<FormItem>
-															<FormLabel>Temperature (°C)</FormLabel>
-															<FormControl>
-																<Input placeholder="37.0" {...field} />
-															</FormControl>
-															<FormMessage />
-														</FormItem>
-													)}
-												/>
-											</div>
-										</div>
-										<div>
-											<h4 className="font-medium mb-4">Measurements</h4>
-											<div className="space-y-4 text-sm">
-												<FormField
-													control={form.control}
-													name="vitals.weight"
-													render={({ field }) => (
-														<FormItem>
-															<FormLabel>Weight (kg)</FormLabel>
-															<FormControl>
-																<Input placeholder="70" {...field} />
-															</FormControl>
-															<FormMessage />
-														</FormItem>
-													)}
-												/>
-												<FormField
-													control={form.control}
-													name="vitals.height"
-													render={({ field }) => (
-														<FormItem>
-															<FormLabel>Height (cm)</FormLabel>
-															<FormControl>
-																<Input placeholder="175" {...field} />
-															</FormControl>
-															<FormMessage />
-														</FormItem>
-													)}
-												/>
-											</div>
-										</div>
-									</div>
-
 									<div className="grid grid-cols-2 gap-4">
 										<FormField
 											control={form.control}
@@ -584,58 +618,189 @@ export function MedicalRecordDetailsDialog({
 										/>
 									</div>
 
+									<div className="flex justify-between items-center mb-2 border-b pb-2">
+										<h3 className="text-base font-medium">Other sections</h3>
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button variant="outline" size="sm">
+													<Plus className="h-4 w-4 mr-1" />
+													Manage sections
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuCheckboxItem
+													checked={form.watch('showVitals')}
+													onCheckedChange={() => toggleSection('showVitals')}
+												>
+													Vitals and Measurements
+												</DropdownMenuCheckboxItem>
+												<DropdownMenuCheckboxItem
+													checked={form.watch('showSymptoms')}
+													onCheckedChange={() => toggleSection('showSymptoms')}
+												>
+													Symptoms
+												</DropdownMenuCheckboxItem>
+												<DropdownMenuCheckboxItem
+													checked={form.watch('showDiagnosis')}
+													onCheckedChange={() => toggleSection('showDiagnosis')}
+												>
+													Diagnosis
+												</DropdownMenuCheckboxItem>
+												<DropdownMenuCheckboxItem
+													checked={form.watch('showTreatment')}
+													onCheckedChange={() => toggleSection('showTreatment')}
+												>
+													Treatment Plan
+												</DropdownMenuCheckboxItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									</div>
+
 									<FormField
 										control={form.control}
-										name="doctor"
+										name="showVitals"
 										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Doctor</FormLabel>
+											<FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 mb-4 bg-muted/20">
+												<div className="space-y-0.5">
+													<FormLabel>Vitals and Measurements</FormLabel>
+													<FormDescription>
+														Show vitals and measurements section
+													</FormDescription>
+												</div>
 												<FormControl>
-													<Input placeholder="Dr. Name" {...field} />
+													<Switch
+														checked={field.value}
+														onCheckedChange={field.onChange}
+													/>
 												</FormControl>
-												<FormMessage />
 											</FormItem>
 										)}
 									/>
+
+									{form.watch('showVitals') && (
+										<div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg mb-6">
+											<div>
+												<h4 className="font-medium mb-4">Vitals</h4>
+												<div className="space-y-4 text-sm">
+													<FormField
+														control={form.control}
+														name="vitals.bloodPressure"
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel>Blood Pressure (mmHg)</FormLabel>
+																<FormControl>
+																	<Input placeholder="120/80" {...field} />
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+													<FormField
+														control={form.control}
+														name="vitals.heartRate"
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel>Heart Rate (bpm)</FormLabel>
+																<FormControl>
+																	<Input placeholder="70" {...field} />
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+													<FormField
+														control={form.control}
+														name="vitals.temperature"
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel>Temperature (°C)</FormLabel>
+																<FormControl>
+																	<Input placeholder="37.0" {...field} />
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+												</div>
+											</div>
+											<div>
+												<h4 className="font-medium mb-4">Measurements</h4>
+												<div className="space-y-4 text-sm">
+													<FormField
+														control={form.control}
+														name="vitals.weight"
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel>Weight (kg)</FormLabel>
+																<FormControl>
+																	<Input placeholder="70" {...field} />
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+													<FormField
+														control={form.control}
+														name="vitals.height"
+														render={({ field }) => (
+															<FormItem>
+																<FormLabel>Height (cm)</FormLabel>
+																<FormControl>
+																	<Input placeholder="175" {...field} />
+																</FormControl>
+																<FormMessage />
+															</FormItem>
+														)}
+													/>
+												</div>
+											</div>
+										</div>
+									)}
 								</div>
 							</Form>
 						) : (
-							<div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg mb-6">
-								<div>
-									<h4 className="font-medium mb-2">Vitals</h4>
-									<div className="space-y-1 text-sm">
-										<p>
-											<span className="text-muted-foreground">
-												Blood Pressure:
-											</span>{' '}
-											{localRecord.vitals.bloodPressure} mmHg
-										</p>
-										<p>
-											<span className="text-muted-foreground">Heart Rate:</span>{' '}
-											{localRecord.vitals.heartRate} bpm
-										</p>
-										<p>
-											<span className="text-muted-foreground">
-												Temperature:
-											</span>{' '}
-											{localRecord.vitals.temperature}°C
-										</p>
+							<>
+								{localRecord.showVitals && (
+									<div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg mb-6">
+										<div>
+											<h4 className="font-medium mb-2">Vitals</h4>
+											<div className="space-y-1 text-sm">
+												<p>
+													<span className="text-muted-foreground">
+														Blood Pressure:
+													</span>{' '}
+													{localRecord.vitals.bloodPressure} mmHg
+												</p>
+												<p>
+													<span className="text-muted-foreground">
+														Heart Rate:
+													</span>{' '}
+													{localRecord.vitals.heartRate} bpm
+												</p>
+												<p>
+													<span className="text-muted-foreground">
+														Temperature:
+													</span>{' '}
+													{localRecord.vitals.temperature}°C
+												</p>
+											</div>
+										</div>
+										<div>
+											<h4 className="font-medium mb-2">Measurements</h4>
+											<div className="space-y-1 text-sm">
+												<p>
+													<span className="text-muted-foreground">Weight:</span>{' '}
+													{localRecord.vitals.weight} kg
+												</p>
+												<p>
+													<span className="text-muted-foreground">Height:</span>{' '}
+													{localRecord.vitals.height} cm
+												</p>
+											</div>
+										</div>
 									</div>
-								</div>
-								<div>
-									<h4 className="font-medium mb-2">Measurements</h4>
-									<div className="space-y-1 text-sm">
-										<p>
-											<span className="text-muted-foreground">Weight:</span>{' '}
-											{localRecord.vitals.weight} kg
-										</p>
-										<p>
-											<span className="text-muted-foreground">Height:</span>{' '}
-											{localRecord.vitals.height} cm
-										</p>
-									</div>
-								</div>
-							</div>
+								)}
+							</>
 						)}
 
 						<div className="space-y-6">
@@ -741,96 +906,157 @@ export function MedicalRecordDetailsDialog({
 											<h3 className="font-semibold mb-4">
 												Session Transcriptions
 											</h3>
-											<div className="space-y-4">
+											<Accordion
+												type="single"
+												collapsible
+												className="space-y-2"
+											>
 												{localRecord.transcriptions.map((transcription) => (
-													<div
+													<AccordionItem
 														key={transcription.id}
-														className="border rounded-lg p-4"
+														value={transcription.id.toString()}
+														className="border rounded-lg px-4"
 													>
-														<div className="flex justify-between items-center mb-2">
-															<h4 className="font-medium">
-																Session on{' '}
-																{format(
-																	new Date(transcription.date),
-																	'MMMM d, yyyy, h:mm a'
-																)}
-															</h4>
-															<Button
-																variant="ghost"
-																size="sm"
-																onClick={() => {
-																	const tempDiv = document.createElement('div');
-																	tempDiv.innerHTML = transcription.content;
-																	const plainText =
-																		tempDiv.textContent ||
-																		tempDiv.innerText ||
-																		'';
-																	navigator.clipboard.writeText(plainText);
-																	toast.success(
-																		'Transcription copied to clipboard'
-																	);
+														<AccordionTrigger className="hover:no-underline">
+															<div className="flex justify-between items-center w-full pr-4">
+																<h4 className="font-medium text-left">
+																	Session on{' '}
+																	{format(
+																		new Date(transcription.date),
+																		'MMMM d, yyyy'
+																	)}
+																</h4>
+																<Button
+																	variant="ghost"
+																	size="sm"
+																	className="h-8 w-8 p-0"
+																	onClick={(e) => {
+																		e.stopPropagation();
+																		const tempDiv =
+																			document.createElement('div');
+																		tempDiv.innerHTML = transcription.content;
+																		const plainText =
+																			tempDiv.textContent ||
+																			tempDiv.innerText ||
+																			'';
+																		navigator.clipboard.writeText(plainText);
+																		toast.success(
+																			'Transcription copied to clipboard'
+																		);
+																	}}
+																>
+																	<Copy className="h-4 w-4" />
+																</Button>
+															</div>
+														</AccordionTrigger>
+														<AccordionContent>
+															<div
+																className="prose prose-sm max-w-none pt-2"
+																dangerouslySetInnerHTML={{
+																	__html: transcription.content,
 																}}
-															>
-																<Copy className="h-4 w-4" />
-															</Button>
-														</div>
-														<div
-															className="prose prose-sm max-w-none"
-															dangerouslySetInnerHTML={{
-																__html: transcription.content,
-															}}
-														/>
-													</div>
+															/>
+														</AccordionContent>
+													</AccordionItem>
 												))}
-											</div>
+											</Accordion>
 										</div>
 									</>
 								)}
 
 							{localRecord.attachments.length > 0 && (
 								<>
-									<Separator />
-									<div>
-										<h3 className="font-semibold mb-4">Attachments</h3>
-										<div className="space-y-2">
-											{localRecord.attachments.map((attachment, index) => (
+									<div className="relative">
+										<div className="absolute inset-0 flex items-center">
+											<span className="w-full border-t" />
+										</div>
+										<div className="relative flex justify-center text-xs uppercase">
+											<span className="bg-background px-2 text-muted-foreground">
+												Files
+											</span>
+										</div>
+									</div>
+
+									<div className="mt-6">
+										{isEditMode && (
+											<div className="border-2 border-dashed rounded-lg p-6 mb-6 flex flex-col items-center justify-center bg-muted/30 w-full">
+												<Upload className="h-6 w-6 text-muted-foreground mb-2" />
+												<p className="text-sm text-muted-foreground mb-1">
+													Drag & drop files here or click to browse
+												</p>
+												<input
+													type="file"
+													multiple
+													className="hidden"
+													id="file-upload-edit"
+													onChange={handleFileChange}
+													accept="image/*,.pdf,.doc,.docx,.txt"
+												/>
+												<Button
+													type="button"
+													variant="outline"
+													size="sm"
+													onClick={() =>
+														document.getElementById('file-upload-edit')?.click()
+													}
+												>
+													Add files
+												</Button>
+											</div>
+										)}
+
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											{localRecord.attachments.map((file, index) => (
 												<div
 													key={index}
-													className="flex items-center justify-between p-2 rounded-lg border hover:bg-accent/50 transition-colors"
+													className="flex items-center p-3 rounded-lg border group hover:bg-accent/50 transition-colors"
 												>
-													<div className="flex items-center gap-2">
-														<div className="p-2 rounded-md bg-primary/10">
-															<FileText className="h-4 w-4 text-primary" />
-														</div>
-														<div>
-															<p className="font-medium text-sm">
-																{attachment.name}
+													<div className="flex items-center gap-3 flex-1 min-w-0">
+														{file.type === 'image' ? (
+															<div className="h-10 w-10 rounded bg-blue-50 flex items-center justify-center">
+																<Image className="h-5 w-5 text-blue-500" />
+															</div>
+														) : (
+															<div className="h-10 w-10 rounded bg-red-50 flex items-center justify-center">
+																<FilePdf className="h-5 w-5 text-red-500" />
+															</div>
+														)}
+														<div className="flex-1 min-w-0">
+															<p className="font-medium truncate">
+																{file.name}
 															</p>
 															<p className="text-xs text-muted-foreground">
-																{attachment.size}
+																{file.size}
 															</p>
 														</div>
 													</div>
 													<div className="flex items-center gap-1">
-														{(attachment.type === 'pdf' ||
-															attachment.type === 'image') && (
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => handlePreviewFile(attachment)}
-																className="h-8 w-8"
-															>
-																<Eye className="h-4 w-4" />
-															</Button>
-														)}
 														<Button
 															variant="ghost"
 															size="icon"
-															onClick={() => handleDownload(attachment.name)}
+															onClick={() => handlePreviewFile(file)}
+															className="h-8 w-8"
+														>
+															<Eye className="h-4 w-4" />
+														</Button>
+														<Button
+															variant="ghost"
+															size="icon"
+															onClick={() => handleDownload(file.name)}
 															className="h-8 w-8"
 														>
 															<Download className="h-4 w-4" />
 														</Button>
+														{isEditMode && (
+															<Button
+																variant="ghost"
+																size="icon"
+																onClick={() => removeFile(file.name)}
+																className="h-8 w-8 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+															>
+																<X className="h-4 w-4" />
+															</Button>
+														)}
 													</div>
 												</div>
 											))}
@@ -863,34 +1089,35 @@ export function MedicalRecordDetailsDialog({
 						</Button>
 					</div>
 				)}
-			</DialogContent>
 
-			<SessionTranscriptionDialog
-				open={transcriptionDialogOpen}
-				onOpenChange={setTranscriptionDialogOpen}
-				onSave={handleSaveTranscription}
-				patientName={localRecord.patient}
-			/>
-
-			{previewFile && (
-				<FilePreviewDialog
-					file={previewFile}
-					open={filePreviewOpen}
-					onOpenChange={setFilePreviewOpen}
-					onDownload={handleDownload}
+				<SessionTranscriptionDialog
+					open={transcriptionDialogOpen}
+					onOpenChange={setTranscriptionDialogOpen}
+					onSave={handleSaveTranscription}
+					patientName={localRecord.patient}
 				/>
-			)}
 
-			<RichTextEditorModal
-				content={editorContent}
-				onChange={handleEditorSave}
-				title={`Edit ${
-					editorFieldName?.charAt(0).toUpperCase() +
-						editorFieldName?.slice(1) || ''
-				}`}
-				open={isEditorOpen}
-				onOpenChange={setIsEditorOpen}
-			/>
+				{previewFile && (
+					<FilePreviewDialog
+						file={previewFile}
+						open={filePreviewOpen}
+						onOpenChange={setFilePreviewOpen}
+						onDownload={handleDownload}
+						filePreview={filePreview[previewFile?.name]}
+					/>
+				)}
+
+				<RichTextEditorModal
+					content={editorContent}
+					onChange={handleEditorSave}
+					title={`Edit ${
+						editorFieldName?.charAt(0).toUpperCase() +
+							editorFieldName?.slice(1) || ''
+					}`}
+					open={isEditorOpen}
+					onOpenChange={setIsEditorOpen}
+				/>
+			</DialogContent>
 		</Dialog>
 	);
 }

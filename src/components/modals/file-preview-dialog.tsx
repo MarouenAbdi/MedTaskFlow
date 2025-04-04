@@ -19,6 +19,7 @@ interface FilePreviewDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	onDownload?: (fileName: string) => void;
+	filePreview?: string;
 }
 
 export function FilePreviewDialog({
@@ -26,6 +27,7 @@ export function FilePreviewDialog({
 	open,
 	onOpenChange,
 	onDownload,
+	filePreview,
 }: FilePreviewDialogProps) {
 	const [zoom, setZoom] = useState(1);
 	const [rotation, setRotation] = useState(0);
@@ -82,7 +84,7 @@ export function FilePreviewDialog({
 							<div className="flex-1 flex items-center justify-center p-4 overflow-auto">
 								<div className="relative flex items-center justify-center h-full w-full">
 									<img
-										src={file.url}
+										src={filePreview || file.url}
 										alt={file.name}
 										className="max-h-full max-w-full object-contain transition-all duration-200"
 										style={{
