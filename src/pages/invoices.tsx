@@ -39,14 +39,38 @@ import {
 } from '@/components/ui/popover';
 import { DateRange } from 'react-day-picker';
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+interface Invoice {
+	id: number;
+	number: string;
+	patient: string;
+	avatar?: string;
+	date: string;
+	dueDate: string;
+	amount: number;
+	status: string;
+	items: Array<{
+		description: string;
+		quantity: number;
+		unitPrice: number;
+		total: number;
+	}>;
+	subtotal: number;
+	tax: number;
+	total: number;
+	paymentMethod?: string;
+	notes?: string;
+}
 
 // Sample invoices data
-const initialInvoices = [
+const initialInvoices: Invoice[] = [
 	{
 		id: 1,
 		number: 'INV-001',
 		patient: 'John Doe',
+		avatar:
+			'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&auto=format',
 		date: '2024-03-15',
 		dueDate: '2024-04-15',
 		amount: 150.0,
@@ -74,6 +98,8 @@ const initialInvoices = [
 		id: 2,
 		number: 'INV-002',
 		patient: 'Sarah Johnson',
+		avatar:
+			'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&auto=format',
 		date: '2024-03-14',
 		dueDate: '2024-04-14',
 		amount: 350.0,
@@ -101,6 +127,8 @@ const initialInvoices = [
 		id: 3,
 		number: 'INV-003',
 		patient: 'Michael Chen',
+		avatar:
+			'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=128&h=128&fit=crop&auto=format',
 		date: '2024-03-13',
 		dueDate: '2024-04-13',
 		amount: 275.0,
@@ -427,7 +455,26 @@ export function Invoices() {
 								<TableCell className="font-medium group-hover:text-primary transition-colors">
 									{invoice.number}
 								</TableCell>
-								<TableCell>{invoice.patient}</TableCell>
+								<TableCell>
+									<div className="flex items-center gap-3">
+										<Avatar>
+											{invoice.avatar ? (
+												<AvatarImage
+													src={invoice.avatar}
+													alt={invoice.patient}
+												/>
+											) : (
+												<AvatarFallback className="bg-primary/10 text-primary/80">
+													{invoice.patient
+														.split(' ')
+														.map((n) => n[0])
+														.join('')}
+												</AvatarFallback>
+											)}
+										</Avatar>
+										<span>{invoice.patient}</span>
+									</div>
+								</TableCell>
 								<TableCell>{invoice.date}</TableCell>
 								<TableCell className="text-right">
 									{formatCurrency(invoice.amount)}
