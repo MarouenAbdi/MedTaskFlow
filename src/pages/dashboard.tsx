@@ -21,7 +21,6 @@ import {
 	Edit2,
 	Trash2,
 	ChevronRight,
-	Search,
 	MoreHorizontal,
 	Users,
 	Bot,
@@ -290,26 +289,11 @@ export function Dashboard() {
 	return (
 		<div className="flex flex-col gap-5 w-full">
 			{/* Welcome header */}
-			<div className="flex justify-between">
-				<div>
-					<h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-					<p className="text-muted-foreground">
-						Welcome to your medical practice management dashboard
-					</p>
-				</div>
-				<div className="flex items-center gap-4">
-					<div className="relative hidden md:block">
-						<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-						<Input
-							type="search"
-							placeholder="Search in dashboard..."
-							className="w-64 pl-8 bg-muted"
-						/>
-					</div>
-					<Button>
-						<Plus className="mr-2 h-4 w-4" /> Create
-					</Button>
-				</div>
+			<div>
+				<h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+				<p className="text-muted-foreground">
+					Welcome to your medical practice management dashboard
+				</p>
 			</div>
 
 			{/* Stats cards */}

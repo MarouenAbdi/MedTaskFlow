@@ -241,7 +241,7 @@ export function NewMedicalRecordDialog({
 			<FormField
 				control={form.control}
 				name="patientName"
-				render={({ field }) => (
+				render={() => (
 					<FormItem>
 						<FormLabel>{t('patients.name')}</FormLabel>
 						<div className="relative">
@@ -454,7 +454,10 @@ export function NewMedicalRecordDialog({
 			>
 				{withButton && !open && (
 					<DialogTrigger asChild>
-						<Button>{t('medicalRecords.new')}</Button>
+						<Button>
+							<Plus className="mr-2 h-4 w-4" />
+							{t('medicalRecords.new')}
+						</Button>
 					</DialogTrigger>
 				)}
 				<DialogContent className="max-h-[90vh] p-0">

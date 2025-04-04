@@ -13,6 +13,23 @@ import { NewMedicalRecordDialog } from '@/components/modals/new-medical-record-d
 import { MedicalRecordDetailsDialog } from '@/components/modals/medical-record-details-dialog';
 import { Badge } from '@/components/ui/badge';
 import { cn, typeVariants } from '@/lib/utils';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { DateRange } from 'react-day-picker';
 
 // Sample medical records data
 const initialRecords = [
@@ -143,6 +160,9 @@ export function MedicalRecords() {
 	>(null);
 	const [detailsOpen, setDetailsOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
+	const [selectedType, setSelectedType] = useState<string>('all');
+	const [selectedStatus, setSelectedStatus] = useState<string>('all');
+	const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
 	const handleRowClick = (record: (typeof records)[0]) => {
 		setSelectedRecord({ ...record });
@@ -158,14 +178,29 @@ export function MedicalRecords() {
 		setSelectedRecord(updatedRecord);
 	};
 
-	const filteredRecords = searchQuery
-		? records.filter(
-				(record) =>
-					record.patient.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					record.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					record.status.toLowerCase().includes(searchQuery.toLowerCase())
-		  )
-		: records;
+	const filteredRecords = records.filter((record) => {
+		// Search filter
+		const matchesSearch = searchQuery
+			? record.patient.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			  record.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			  record.status.toLowerCase().includes(searchQuery.toLowerCase())
+			: true;
+
+		// Type filter
+		const matchesType = selectedType === 'all' || record.type === selectedType;
+
+		// Status filter
+		const matchesStatus =
+			selectedStatus === 'all' || record.status === selectedStatus;
+
+		// Date range filter
+		const recordDate = new Date(record.date);
+		const matchesDateRange =
+			(!dateRange?.from || recordDate >= dateRange.from) &&
+			(!dateRange?.to || recordDate <= dateRange.to);
+
+		return matchesSearch && matchesType && matchesStatus && matchesDateRange;
+	});
 
 	// Helper function to determine badge variant based on status
 	const getStatusBadgeVariant = (status: string) => {
@@ -185,22 +220,123 @@ export function MedicalRecords() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex justify-between items-center">
+			<div>
 				<h2 className="text-3xl font-bold tracking-tight">
 					{t('nav.medicalRecords')}
 				</h2>
-				<div className="flex items-center gap-4">
-					<div className="flex w-full max-w-sm items-center space-x-2">
-						<Input
-							type="search"
-							placeholder={t('common.search')}
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-						/>
-					</div>
+				<p className="text-muted-foreground">
+					{t('medicalRecords.description')}
+				</p>
+			</div>
+
+			<div className="flex items-center gap-4">
+				<div className="relative w-[300px]">
+					<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+					<Input
+						type="search"
+						placeholder={t('medicalRecords.searchPlaceholder')}
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="pl-8"
+					/>
+				</div>
+
+				<div className="flex items-center gap-4 ml-auto">
+					<Select value={selectedType} onValueChange={setSelectedType}>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder={t('medicalRecords.filterByType')} />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="all">{t('medicalRecords.typeAll')}</SelectItem>
+							<SelectItem value="consultation">
+								{t('medicalRecords.typeConsultation')}
+							</SelectItem>
+							<SelectItem value="followup">
+								{t('medicalRecords.typeFollowup')}
+							</SelectItem>
+							<SelectItem value="procedure">
+								{t('medicalRecords.typeProcedure')}
+							</SelectItem>
+						</SelectContent>
+					</Select>
+
+					<Select value={selectedStatus} onValueChange={setSelectedStatus}>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder={t('medicalRecords.filterByStatus')} />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="all">
+								{t('medicalRecords.statusAll')}
+							</SelectItem>
+							<SelectItem value="completed">
+								{t('medicalRecords.statusCompleted')}
+							</SelectItem>
+							<SelectItem value="pending">
+								{t('medicalRecords.statusPending')}
+							</SelectItem>
+							<SelectItem value="notstarted">
+								{t('medicalRecords.statusNotStarted')}
+							</SelectItem>
+							<SelectItem value="onhold">
+								{t('medicalRecords.statusOnHold')}
+							</SelectItem>
+						</SelectContent>
+					</Select>
+
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button
+								variant="outline"
+								className={cn(
+									'w-[240px] justify-start text-left font-normal',
+									!dateRange?.from && 'text-muted-foreground'
+								)}
+							>
+								<CalendarIcon className="mr-2 h-4 w-4" />
+								{dateRange?.from ? (
+									dateRange.to ? (
+										<>
+											{format(dateRange.from, 'LLL dd, y')} -{' '}
+											{format(dateRange.to, 'LLL dd, y')}
+										</>
+									) : (
+										format(dateRange.from, 'LLL dd, y')
+									)
+								) : (
+									<span>{t('medicalRecords.filterByDate')}</span>
+								)}
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-auto p-0" align="end">
+							<div className="border-b border-border p-3 flex items-center justify-between">
+								<p className="text-sm font-medium">
+									{t('medicalRecords.selectDateRange')}
+								</p>
+								{dateRange?.from && (
+									<Button
+										variant="ghost"
+										className="h-8 px-2"
+										onClick={() => setDateRange(undefined)}
+									>
+										{t('common.clear')}
+									</Button>
+								)}
+							</div>
+							<Calendar
+								initialFocus
+								mode="range"
+								defaultMonth={dateRange?.from}
+								selected={dateRange}
+								onSelect={setDateRange}
+								numberOfMonths={2}
+							/>
+						</PopoverContent>
+					</Popover>
+
 					<NewMedicalRecordDialog />
 				</div>
 			</div>
+
 			<div className="rounded-md border">
 				<Table>
 					<TableHeader>

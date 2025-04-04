@@ -14,7 +14,30 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { NewInvoiceDialog } from '@/components/modals/new-invoice-dialog';
 import { InvoiceDetailsDialog } from '@/components/modals/invoice-details-dialog';
 import { toast } from 'sonner';
-import { Download, Printer } from 'lucide-react';
+import {
+	Download,
+	Printer,
+	Search,
+	Calendar as CalendarIcon,
+	Plus,
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { DateRange } from 'react-day-picker';
+import { cn } from '@/lib/utils';
 
 // Sample invoices data
 const initialInvoices = [
@@ -109,6 +132,9 @@ export function Invoices() {
 	>(null);
 	const [detailsOpen, setDetailsOpen] = useState(false);
 	const [selectedInvoices, setSelectedInvoices] = useState<number[]>([]);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [selectedStatus, setSelectedStatus] = useState<string>('all');
+	const [dateRange, setDateRange] = useState<DateRange | undefined>();
 
 	const handleRowClick = (
 		invoice: (typeof invoices)[0],
@@ -197,13 +223,117 @@ export function Invoices() {
 		}
 	};
 
+	const filteredInvoices = invoices.filter((invoice) => {
+		// Search filter
+		const matchesSearch = searchQuery
+			? invoice.patient.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			  invoice.number.toLowerCase().includes(searchQuery.toLowerCase())
+			: true;
+
+		// Status filter
+		const matchesStatus =
+			selectedStatus === 'all' || invoice.status === selectedStatus;
+
+		// Date range filter
+		const invoiceDate = new Date(invoice.date);
+		const matchesDateRange =
+			(!dateRange?.from || invoiceDate >= dateRange.from) &&
+			(!dateRange?.to || invoiceDate <= dateRange.to);
+
+		return matchesSearch && matchesStatus && matchesDateRange;
+	});
+
 	return (
 		<div className="space-y-6">
-			<div className="flex justify-between items-center">
+			<div>
 				<h2 className="text-3xl font-bold tracking-tight">
 					{t('nav.invoices')}
 				</h2>
-				<div className="flex items-center gap-4">
+				<p className="text-muted-foreground">{t('invoices.description')}</p>
+			</div>
+
+			<div className="flex items-center gap-4">
+				<div className="relative w-[300px]">
+					<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+					<Input
+						type="search"
+						placeholder={t('invoices.searchPlaceholder')}
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="pl-8"
+					/>
+				</div>
+
+				<div className="flex items-center gap-4 ml-auto">
+					<Select value={selectedStatus} onValueChange={setSelectedStatus}>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder={t('invoices.filterByStatus')} />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="all">{t('invoices.statusAll')}</SelectItem>
+							<SelectItem value="paid">{t('invoices.statusPaid')}</SelectItem>
+							<SelectItem value="processing">
+								{t('invoices.statusProcessing')}
+							</SelectItem>
+							<SelectItem value="waiting">
+								{t('invoices.statusWaiting')}
+							</SelectItem>
+							<SelectItem value="cancelled">
+								{t('invoices.statusCancelled')}
+							</SelectItem>
+						</SelectContent>
+					</Select>
+
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button
+								variant="outline"
+								className={cn(
+									'w-[240px] justify-start text-left font-normal',
+									!dateRange?.from && 'text-muted-foreground'
+								)}
+							>
+								<CalendarIcon className="mr-2 h-4 w-4" />
+								{dateRange?.from ? (
+									dateRange.to ? (
+										<>
+											{format(dateRange.from, 'LLL dd, y')} -{' '}
+											{format(dateRange.to, 'LLL dd, y')}
+										</>
+									) : (
+										format(dateRange.from, 'LLL dd, y')
+									)
+								) : (
+									<span>{t('invoices.filterByDate')}</span>
+								)}
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-auto p-0" align="end">
+							<div className="border-b border-border p-3 flex items-center justify-between">
+								<p className="text-sm font-medium">
+									{t('invoices.selectDateRange')}
+								</p>
+								{dateRange?.from && (
+									<Button
+										variant="ghost"
+										className="h-8 px-2"
+										onClick={() => setDateRange(undefined)}
+									>
+										{t('common.clear')}
+									</Button>
+								)}
+							</div>
+							<Calendar
+								initialFocus
+								mode="range"
+								defaultMonth={dateRange?.from}
+								selected={dateRange}
+								onSelect={setDateRange}
+								numberOfMonths={2}
+							/>
+						</PopoverContent>
+					</Popover>
+
 					{selectedInvoices.length > 0 && (
 						<>
 							<Button
@@ -230,9 +360,16 @@ export function Invoices() {
 							</Button>
 						</>
 					)}
-					<NewInvoiceDialog />
+
+					<NewInvoiceDialog>
+						<Button className="gap-2">
+							<Plus className="h-4 w-4" />
+							{t('invoices.new')}
+						</Button>
+					</NewInvoiceDialog>
 				</div>
 			</div>
+
 			<div className="rounded-md border">
 				<Table>
 					<TableHeader>
@@ -260,7 +397,7 @@ export function Invoices() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{invoices.map((invoice) => (
+						{filteredInvoices.map((invoice) => (
 							<TableRow
 								key={invoice.id}
 								className="cursor-pointer group hover:bg-accent/50 transition-colors"
