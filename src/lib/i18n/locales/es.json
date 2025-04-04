@@ -175,7 +175,7 @@
 		"new": "Nueva Factura",
 		"save": "Guardar Factura",
 		"description": "Gestione y realice un seguimiento de las facturas de los pacientes, pagos e historial de facturación",
-		"searchPlaceholder": "Buscar por nombre del paciente o número de factura",
+		"searchPlaceholder": "Buscar por paciente o número de factura",
 		"filterByStatus": "Filtrar por estado",
 		"filterByDate": "Filtrar por fecha",
 		"selectDateRange": "Seleccionar rango de fechas",
@@ -261,6 +261,7 @@
 				"description": "Responde a preguntas comunes de los pacientes y proporciona apoyo para consultas y preocupaciones generales.",
 				"avatar": "/assets/avatars/patient-support-assistant.svg"
 			}
-		}
+		},
+		"description": "Mejore su práctica con asistentes virtuales impulsados por IA para diversas tareas médicas"
 	}
 }

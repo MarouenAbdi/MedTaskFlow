@@ -20,6 +20,7 @@ import {
 	Search,
 	Calendar as CalendarIcon,
 	Plus,
+	DollarSign,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -38,6 +39,7 @@ import {
 } from '@/components/ui/popover';
 import { DateRange } from 'react-day-picker';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // Sample invoices data
 const initialInvoices = [
@@ -245,11 +247,18 @@ export function Invoices() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h2 className="text-3xl font-bold tracking-tight">
-					{t('nav.invoices')}
-				</h2>
-				<p className="text-muted-foreground">{t('invoices.description')}</p>
+			<div className="flex items-start gap-4">
+				<Avatar className="h-12 w-12 mt-1">
+					<AvatarFallback className="bg-amber-100 dark:bg-amber-900/20">
+						<DollarSign className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+					</AvatarFallback>
+				</Avatar>
+				<div>
+					<h2 className="text-3xl font-bold tracking-tight">
+						{t('nav.invoices')}
+					</h2>
+					<p className="text-muted-foreground">{t('invoices.description')}</p>
+				</div>
 			</div>
 
 			<div className="flex items-center gap-4">

@@ -24,6 +24,7 @@ import {
 	Filter,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // Removed unused @ts-expect-error directive
 import { AiAssistantDialog } from '@/components/modals/ai-assistant-dialog';
@@ -174,10 +175,22 @@ export function AiAssistants() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex justify-between items-center">
-				<h2 className="text-3xl font-bold tracking-tight">
-					{t('nav.aiAssistants')}
-				</h2>
+			<div className="flex justify-between items-start">
+				<div className="flex items-start gap-4">
+					<Avatar className="h-12 w-12 mt-1">
+						<AvatarFallback className="bg-indigo-100 dark:bg-indigo-900/20">
+							<Bot className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+						</AvatarFallback>
+					</Avatar>
+					<div>
+						<h2 className="text-3xl font-bold tracking-tight">
+							{t('nav.aiAssistants')}
+						</h2>
+						<p className="text-muted-foreground">
+							{t('aiAssistants.description')}
+						</p>
+					</div>
+				</div>
 				<div className="flex items-center gap-4">
 					<div className="flex w-full max-w-sm items-center space-x-2">
 						<Input

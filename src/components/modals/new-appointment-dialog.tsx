@@ -40,7 +40,7 @@ const samplePatients = [
 	{ id: 5, name: 'Robert Wilson' },
 ];
 
-interface AppointmentFormValues {
+export interface AppointmentFormValues {
 	patientName: string;
 	date: string;
 	time: string;
@@ -56,6 +56,7 @@ interface NewAppointmentDialogProps {
 	defaultTime?: string;
 	onSave?: (data: AppointmentFormValues) => void;
 	withButton?: boolean;
+	selectedTimeSlot?: { date: Date; time: string } | null;
 }
 
 export function NewAppointmentDialog({
@@ -65,6 +66,7 @@ export function NewAppointmentDialog({
 	defaultTime,
 	onSave,
 	withButton = true,
+	selectedTimeSlot,
 }: NewAppointmentDialogProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [newPatientDialogOpen, setNewPatientDialogOpen] = useState(false);
@@ -87,7 +89,11 @@ export function NewAppointmentDialog({
 		if (defaultTime) {
 			form.setValue('time', defaultTime);
 		}
-	}, [defaultDate, defaultTime, form]);
+		if (selectedTimeSlot) {
+			form.setValue('date', format(selectedTimeSlot.date, 'yyyy-MM-dd'));
+			form.setValue('time', selectedTimeSlot.time);
+		}
+	}, [defaultDate, defaultTime, selectedTimeSlot, form]);
 
 	function onSubmit(data: AppointmentFormValues) {
 		if (onSave) {

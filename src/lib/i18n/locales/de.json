@@ -238,6 +238,7 @@
 				"description": "Beantwortet häufige Patientenfragen und bietet Unterstützung bei allgemeinen Anfragen und Anliegen.",
 				"avatar": "/assets/avatars/patient-support-assistant.svg"
 			}
-		}
+		},
+		"description": "Verbessern Sie Ihre Praxis mit KI-gestützten virtuellen Assistenten für verschiedene medizinische Aufgaben"
 	}
 }

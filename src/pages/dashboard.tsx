@@ -24,6 +24,7 @@ import {
 	MoreHorizontal,
 	Users,
 	Bot,
+	LayoutDashboard,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -289,11 +290,18 @@ export function Dashboard() {
 	return (
 		<div className="flex flex-col gap-5 w-full">
 			{/* Welcome header */}
-			<div>
-				<h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-				<p className="text-muted-foreground">
-					Welcome to your medical practice management dashboard
-				</p>
+			<div className="flex items-start gap-4">
+				<Avatar className="h-12 w-12 mt-1">
+					<AvatarFallback className="bg-rose-100 dark:bg-rose-900/20">
+						<LayoutDashboard className="h-6 w-6 text-rose-600 dark:text-rose-400" />
+					</AvatarFallback>
+				</Avatar>
+				<div>
+					<h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+					<p className="text-muted-foreground">
+						Welcome to your medical practice management dashboard
+					</p>
+				</div>
 			</div>
 
 			{/* Stats cards */}

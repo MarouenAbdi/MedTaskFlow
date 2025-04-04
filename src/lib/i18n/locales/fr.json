@@ -191,7 +191,7 @@
 		"paymentBankTransfer": "Virement bancaire",
 		"updateStatus": "Modifier le statut",
 		"statusUpdated": "Statut de la facture mis à jour avec succès",
-		"searchPlaceholder": "Rechercher par nom du patient ou numéro de facture",
+		"searchPlaceholder": "Rechercher par patient ou numéro de facture",
 		"filterByStatus": "Filtrer par statut",
 		"filterByDate": "Filtrer par date",
 		"selectDateRange": "Sélectionner la période",
@@ -280,6 +280,7 @@
 				"description": "Répond aux questions courantes des patients et offre un soutien pour les demandes et préoccupations générales.",
 				"avatar": "/assets/avatars/patient-support-assistant.svg"
 			}
-		}
+		},
+		"description": "Améliorez votre pratique avec des assistants virtuels alimentés par l'IA pour diverses tâches médicales"
 	}
 }

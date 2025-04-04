@@ -21,7 +21,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Search } from 'lucide-react';
+import { Calendar as CalendarIcon, Search, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -30,9 +30,43 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { DateRange } from 'react-day-picker';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+interface MedicalRecord {
+	id: number;
+	patient: string;
+	patientDateOfBirth: string;
+	date: string;
+	type: string;
+	doctor: string;
+	status: string;
+	avatar?: string;
+	symptoms: string;
+	diagnosis: string;
+	treatment: string;
+	notes: string;
+	vitals: {
+		bloodPressure: string;
+		heartRate: string;
+		temperature: string;
+		weight: string;
+		height: string;
+	};
+	attachments: Array<{
+		name: string;
+		type: string;
+		size: string;
+		url: string;
+	}>;
+	transcriptions?: Array<{
+		id: number;
+		date: string;
+		content: string;
+	}>;
+}
 
 // Sample medical records data
-const initialRecords = [
+const initialRecords: MedicalRecord[] = [
 	{
 		id: 1,
 		patient: 'John Doe',
@@ -41,6 +75,8 @@ const initialRecords = [
 		type: 'consultation',
 		doctor: 'Dr. Smith',
 		status: 'completed',
+		avatar:
+			'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&h=128&fit=crop&auto=format',
 		symptoms: '<p>Patient reports persistent headaches and fatigue.</p>',
 		diagnosis:
 			'<p>Tension headaches due to stress. Blood pressure slightly elevated.</p>',
@@ -85,6 +121,8 @@ const initialRecords = [
 		type: 'followup',
 		doctor: 'Dr. Chen',
 		status: 'pending',
+		avatar:
+			'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop&auto=format',
 		symptoms:
 			'<p>Post-surgery follow-up. Patient reports mild discomfort at incision site.</p>',
 		diagnosis: '<p>Normal post-operative healing. No signs of infection.</p>',
@@ -121,6 +159,8 @@ const initialRecords = [
 		type: 'procedure',
 		doctor: 'Dr. Rodriguez',
 		status: 'completed',
+		avatar:
+			'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=128&h=128&fit=crop&auto=format',
 		symptoms:
 			'<p>Severe chest pain and shortness of breath. Patient reports onset during exercise.</p>',
 		diagnosis:
@@ -147,6 +187,36 @@ const initialRecords = [
 				type: 'image',
 				size: '3.2 MB',
 				url: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&h=600&fit=crop',
+			},
+		],
+	},
+	{
+		id: 4,
+		patient: 'Emily Davis',
+		patientDateOfBirth: '1985-04-18',
+		date: '2024-03-12',
+		type: 'consultation',
+		doctor: 'Dr. Wilson',
+		status: 'completed',
+		symptoms:
+			'<p>Regular diabetes checkup. Patient reports good compliance with medication.</p>',
+		diagnosis: '<p>Type 2 Diabetes - Well controlled</p>',
+		treatment:
+			'<p>Continue current medication regimen. Diet and exercise plan reviewed.</p>',
+		notes: '<p>Next follow-up in 3 months. Blood work shows improvement.</p>',
+		vitals: {
+			bloodPressure: '125/82',
+			heartRate: '76',
+			temperature: '36.9',
+			weight: '68',
+			height: '170',
+		},
+		attachments: [
+			{
+				name: 'blood_work.pdf',
+				type: 'pdf',
+				size: '1.1 MB',
+				url: 'https://www.orimi.com/pdf-test.pdf',
 			},
 		],
 	},
@@ -220,13 +290,20 @@ export function MedicalRecords() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h2 className="text-3xl font-bold tracking-tight">
-					{t('nav.medicalRecords')}
-				</h2>
-				<p className="text-muted-foreground">
-					{t('medicalRecords.description')}
-				</p>
+			<div className="flex items-start gap-4">
+				<Avatar className="h-12 w-12 mt-1">
+					<AvatarFallback className="bg-blue-100 dark:bg-blue-900/20">
+						<FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+					</AvatarFallback>
+				</Avatar>
+				<div>
+					<h2 className="text-3xl font-bold tracking-tight">
+						{t('nav.medicalRecords')}
+					</h2>
+					<p className="text-muted-foreground">
+						{t('medicalRecords.description')}
+					</p>
+				</div>
 			</div>
 
 			<div className="flex items-center gap-4">
@@ -357,8 +434,24 @@ export function MedicalRecords() {
 								className="cursor-pointer group hover:bg-accent/50 transition-colors"
 								onClick={() => handleRowClick(record)}
 							>
-								<TableCell className="font-medium group-hover:text-primary transition-colors">
-									{record.patient}
+								<TableCell className="font-medium">
+									<div className="flex items-center gap-3">
+										<Avatar>
+											{record.avatar ? (
+												<AvatarImage src={record.avatar} alt={record.patient} />
+											) : (
+												<AvatarFallback className="bg-primary/10 text-primary/80">
+													{record.patient
+														.split(' ')
+														.map((n) => n[0])
+														.join('')}
+												</AvatarFallback>
+											)}
+										</Avatar>
+										<span className="group-hover:text-primary transition-colors">
+											{record.patient}
+										</span>
+									</div>
 								</TableCell>
 								<TableCell>{record.date}</TableCell>
 								<TableCell>

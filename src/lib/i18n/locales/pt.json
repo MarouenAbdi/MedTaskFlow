@@ -251,6 +251,7 @@
 				"description": "Responde perguntas frequentes dos pacientes e oferece suporte em consultas e preocupações gerais.",
 				"avatar": "/assets/avatars/patient-support-assistant.svg"
 			}
-		}
+		},
+		"description": "Aprimore sua prática com assistentes virtuais alimentados por IA para várias tarefas médicas"
 	}
 }

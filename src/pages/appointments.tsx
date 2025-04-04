@@ -7,7 +7,6 @@ import {
 	eachDayOfInterval,
 	isWeekend,
 	isSameDay,
-	parse,
 } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,11 +17,15 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { NewAppointmentDialog } from '@/components/modals/new-appointment-dialog';
+import {
+	NewAppointmentDialog,
+	AppointmentFormValues,
+} from '@/components/modals/new-appointment-dialog';
 import { EditAppointmentDialog } from '@/components/modals/edit-appointment-dialog';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, Clock, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Plus, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 // Generate time slots from 8 AM to 6 PM
 const timeSlots = Array.from({ length: 21 }, (_, i) => {
@@ -240,8 +243,15 @@ export function Appointments() {
 		}
 	};
 
-	const handleNewAppointment = (appointment: (typeof appointments)[0]) => {
-		setAppointments((prev) => [...prev, { ...appointment, id: Date.now() }]);
+	const handleNewAppointment = (data: AppointmentFormValues) => {
+		const appointment = {
+			id: Date.now(),
+			patient: data.patientName,
+			type: data.type,
+			time: data.time,
+			duration: parseInt(data.duration),
+		};
+		setAppointments((prev) => [...prev, appointment]);
 		toast.success('New appointment created successfully');
 	};
 
@@ -252,11 +262,20 @@ export function Appointments() {
 
 	return (
 		<div className="flex flex-col space-y-6 min-h-[calc(100vh-8rem)] pb-8">
-			<div>
-				<h2 className="text-3xl font-bold tracking-tight">
-					{t('nav.appointments')}
-				</h2>
-				<p className="text-muted-foreground">{t('appointments.description')}</p>
+			<div className="flex items-start gap-4">
+				<Avatar className="h-12 w-12 mt-1">
+					<AvatarFallback className="bg-emerald-100 dark:bg-emerald-900/20">
+						<Calendar className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+					</AvatarFallback>
+				</Avatar>
+				<div>
+					<h2 className="text-3xl font-bold tracking-tight">
+						{t('nav.appointments')}
+					</h2>
+					<p className="text-muted-foreground">
+						{t('appointments.description')}
+					</p>
+				</div>
 			</div>
 
 			<div

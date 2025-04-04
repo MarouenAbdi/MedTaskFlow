@@ -175,7 +175,7 @@
 		"new": "New Invoice",
 		"save": "Save Invoice",
 		"description": "Manage and track patient invoices, payments, and billing history",
-		"searchPlaceholder": "Search by patient name or invoice number",
+		"searchPlaceholder": "Search by patient or invoice number",
 		"filterByStatus": "Filter by status",
 		"filterByDate": "Filter by date",
 		"selectDateRange": "Select date range",
@@ -276,6 +276,7 @@
 				"description": "Answers common patient questions and provides support for general inquiries and concerns.",
 				"avatar": "/assets/avatars/patient-support-assistant.svg"
 			}
-		}
+		},
+		"description": "Enhance your practice with AI-powered virtual assistants for various medical tasks"
 	}
 }

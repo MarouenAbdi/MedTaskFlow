@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { NewPatientDialog } from '@/components/modals/new-patient-dialog';
 import { PatientDetailsDialog } from '@/components/modals/patient-details-dialog';
-import { User, Search, ArrowUpDown } from 'lucide-react';
+import { User, Search, ArrowUpDown, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import {
@@ -187,11 +187,18 @@ export function Patients() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h2 className="text-3xl font-bold tracking-tight">
-					{t('nav.patients')}
-				</h2>
-				<p className="text-muted-foreground">{t('patients.description')}</p>
+			<div className="flex items-start gap-4">
+				<Avatar className="h-12 w-12 mt-1">
+					<AvatarFallback className="bg-purple-100 dark:bg-purple-900/20">
+						<Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+					</AvatarFallback>
+				</Avatar>
+				<div>
+					<h2 className="text-3xl font-bold tracking-tight">
+						{t('nav.patients')}
+					</h2>
+					<p className="text-muted-foreground">{t('patients.description')}</p>
+				</div>
 			</div>
 
 			<div className="flex justify-between items-center">
