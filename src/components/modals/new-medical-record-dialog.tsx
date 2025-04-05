@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
@@ -461,11 +460,8 @@ export function NewMedicalRecordDialog({
 					</DialogTrigger>
 				)}
 				<DialogContent className="max-h-[90vh] p-0">
-					<DialogHeader className="p-6 pb-0">
+					<DialogHeader className="px-6 py-4 border-b">
 						<DialogTitle>{t('medicalRecords.new')}</DialogTitle>
-						<DialogDescription>
-							{t('medicalRecords.description')}
-						</DialogDescription>
 					</DialogHeader>
 					<ScrollArea className="h-full max-h-[calc(90vh-8rem)]">
 						<div className="p-6 pointer-events-auto">

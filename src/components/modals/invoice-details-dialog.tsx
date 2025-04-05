@@ -114,15 +114,17 @@ export function InvoiceDetailsDialog({
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-4xl h-[90vh] overflow-hidden p-0 flex flex-col">
 				<DialogHeader className="px-6 py-4 border-b flex-shrink-0">
-					<div className="flex flex-col space-y-4">
+					<DialogTitle>Invoice Details</DialogTitle>
+				</DialogHeader>
+
+				<div className="flex-1 overflow-y-auto px-6 py-4">
+					<div className="flex flex-col space-y-4 mb-6">
 						<div className="flex items-center justify-between">
 							<div>
-								<div className="text-sm font-medium text-muted-foreground mb-1">
+								<h2 className="text-2xl font-semibold">{invoice.patient}</h2>
+								<div className="text-sm font-medium text-muted-foreground">
 									Invoice #{invoice.number}
 								</div>
-								<DialogTitle className="text-2xl">
-									{invoice.patient}
-								</DialogTitle>
 							</div>
 						</div>
 						<div className="flex items-center justify-between">
@@ -204,9 +206,7 @@ export function InvoiceDetailsDialog({
 							</div>
 						</div>
 					</div>
-				</DialogHeader>
 
-				<div className="flex-1 overflow-y-auto px-6 py-4">
 					<div className="space-y-6" id="invoice-content">
 						<div className="border rounded-lg">
 							<table className="w-full">

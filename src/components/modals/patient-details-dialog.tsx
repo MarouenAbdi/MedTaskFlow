@@ -174,17 +174,30 @@ export function PatientDetailsDialog({
 			<Dialog open={open} onOpenChange={handleOpenChange}>
 				<DialogContent className="max-w-4xl h-[90vh] overflow-hidden p-0 flex flex-col">
 					<DialogHeader className="px-6 py-4 border-b flex-shrink-0">
-						<div className="flex flex-col space-y-4">
-							<div className="flex items-center justify-between">
-								<div>
-									<div className="text-sm font-medium text-muted-foreground mb-1">
-										Patient Record
-									</div>
-									<DialogTitle className="text-2xl">{patient.name}</DialogTitle>
-								</div>
-							</div>
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-4">
+						<DialogTitle>Patient Record</DialogTitle>
+					</DialogHeader>
+
+					<div className="flex-1 overflow-y-auto px-6 py-4">
+						<div className="flex items-center gap-4 mb-6">
+							<Avatar
+								className={cn(
+									'w-16 h-16',
+									avatarPreview &&
+										'cursor-pointer hover:opacity-80 transition-opacity'
+								)}
+								onClick={handleAvatarClick}
+							>
+								{avatarPreview ? (
+									<AvatarImage src={avatarPreview} alt={patient.name} />
+								) : (
+									<AvatarFallback className="bg-primary/10">
+										<User className="h-8 w-8 text-primary/80" />
+									</AvatarFallback>
+								)}
+							</Avatar>
+							<div>
+								<h2 className="text-2xl font-semibold">{patient.name}</h2>
+								<div className="flex items-center gap-2 mt-1">
 									<Badge
 										variant={
 											patient.status === 'active' ? 'success' : 'destructive'
@@ -198,73 +211,44 @@ export function PatientDetailsDialog({
 										)}
 									</Badge>
 								</div>
-
-								{!isEditMode && (
+							</div>
+							{isEditMode ? (
+								<div className="ml-auto">
+									<Input
+										type="file"
+										accept="image/*"
+										className="hidden"
+										id="avatar-upload"
+										onChange={handleAvatarChange}
+									/>
 									<Button
+										type="button"
 										variant="outline"
-										size="sm"
-										onClick={() => setIsEditMode(true)}
+										className="text-sm"
+										onClick={() =>
+											document.getElementById('avatar-upload')?.click()
+										}
 									>
-										<Edit className="mr-2 h-4 w-4" />
-										Edit Details
+										{t('patients.changePhoto')}
 									</Button>
-								)}
-							</div>
-						</div>
-					</DialogHeader>
-
-					<div className="flex-1 overflow-y-auto px-6 py-4">
-						<div className="space-y-6">
-							{/* Avatar Section */}
-							<div className="flex justify-center mb-6">
-								<div className="space-y-2 text-center">
-									<div className="relative w-24 h-24 mx-auto rounded-full overflow-hidden">
-										<Avatar
-											className={cn(
-												'w-24 h-24',
-												avatarPreview &&
-													'cursor-pointer hover:opacity-80 transition-opacity'
-											)}
-											onClick={handleAvatarClick}
-										>
-											{avatarPreview ? (
-												<AvatarImage src={avatarPreview} alt={patient.name} />
-											) : (
-												<AvatarFallback className="bg-primary/10">
-													<User className="h-12 w-12 text-primary/80" />
-												</AvatarFallback>
-											)}
-										</Avatar>
-									</div>
-									{isEditMode && (
-										<div>
-											<Input
-												type="file"
-												accept="image/*"
-												className="hidden"
-												id="avatar-upload"
-												onChange={handleAvatarChange}
-											/>
-											<Button
-												type="button"
-												variant="outline"
-												className="text-sm"
-												onClick={() =>
-													document.getElementById('avatar-upload')?.click()
-												}
-											>
-												{t('patients.changePhoto')}
-											</Button>
-										</div>
-									)}
 								</div>
-							</div>
+							) : (
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() => setIsEditMode(true)}
+									className="ml-auto"
+								>
+									<Edit className="mr-2 h-4 w-4" />
+									Edit Details
+								</Button>
+							)}
+						</div>
 
-							<Separator />
-
-							<Form {...form}>
-								<div className="space-y-6">
-									<h3 className="text-lg font-semibold">
+						<Form {...form}>
+							<div className="space-y-6">
+								<div>
+									<h3 className="text-lg font-semibold mb-4">
 										Personal Information
 									</h3>
 
@@ -477,59 +461,59 @@ export function PatientDetailsDialog({
 											</div>
 										</div>
 									)}
-
-									<Separator />
-
-									<div>
-										<div className="flex justify-between items-center mb-2">
-											<h3 className="text-lg font-semibold">
-												{t('common.notes')}
-											</h3>
-											{isEditMode && (
-												<div className="flex items-center gap-1">
-													<Button
-														type="button"
-														variant="ghost"
-														size="sm"
-														onClick={handleCopyNotes}
-													>
-														<Copy className="h-4 w-4 mr-2" />
-														Copy
-													</Button>
-													<Button
-														type="button"
-														variant="ghost"
-														size="sm"
-														onClick={handleClearNotes}
-														className="text-destructive"
-													>
-														<Trash2 className="h-4 w-4 mr-2" />
-														Clear
-													</Button>
-													<Button
-														type="button"
-														variant="ghost"
-														size="sm"
-														onClick={() => setIsEditorOpen(true)}
-													>
-														<Edit className="h-4 w-4 mr-2" />
-														Edit
-													</Button>
-												</div>
-											)}
-										</div>
-										<div
-											className="prose prose-sm max-w-none p-4 bg-muted/20 rounded-lg min-h-[100px]"
-											dangerouslySetInnerHTML={{
-												__html:
-													form.getValues('notes') ||
-													'<p class="text-muted-foreground">No notes available</p>',
-											}}
-										/>
-									</div>
 								</div>
-							</Form>
-						</div>
+
+								<Separator />
+
+								<div>
+									<div className="flex justify-between items-center mb-4">
+										<h3 className="text-lg font-semibold">
+											{t('common.notes')}
+										</h3>
+										{isEditMode && (
+											<div className="flex items-center gap-1">
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													onClick={handleCopyNotes}
+												>
+													<Copy className="h-4 w-4 mr-2" />
+													Copy
+												</Button>
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													onClick={handleClearNotes}
+													className="text-destructive"
+												>
+													<Trash2 className="h-4 w-4 mr-2" />
+													Clear
+												</Button>
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													onClick={() => setIsEditorOpen(true)}
+												>
+													<Edit className="h-4 w-4 mr-2" />
+													Edit
+												</Button>
+											</div>
+										)}
+									</div>
+									<div
+										className="prose prose-sm max-w-none p-4 bg-muted/20 rounded-lg min-h-[100px]"
+										dangerouslySetInnerHTML={{
+											__html:
+												form.getValues('notes') ||
+												'<p class="text-muted-foreground">No notes available</p>',
+										}}
+									/>
+								</div>
+							</div>
+						</Form>
 					</div>
 					{isEditMode && (
 						<div className="border-t p-4 flex justify-end gap-4">
