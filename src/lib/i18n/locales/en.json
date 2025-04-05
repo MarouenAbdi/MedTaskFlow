@@ -204,7 +204,20 @@
 		"downloadSelected": "Download ({{count}})",
 		"printSelected": "Print ({{count}})",
 		"bulkDownloadStarted": "Starting download of invoices: {{invoices}}",
-		"bulkPrintStarted": "Starting print of invoices: {{invoices}}"
+		"bulkPrintStarted": "Starting print of invoices: {{invoices}}",
+		"details": "Invoice Details",
+		"issueDate": "Issue Date",
+		"subtotal": "Subtotal",
+		"tax": "Tax",
+		"total": "Total",
+		"fiscalNumberAbbr": "TIN",
+		"healthNumberAbbr": "PHN",
+		"items": {
+			"description": "Description",
+			"quantity": "Quantity",
+			"unitPrice": "Unit Price",
+			"total": "Total"
+		}
 	},
 	"common": {
 		"new": "New",

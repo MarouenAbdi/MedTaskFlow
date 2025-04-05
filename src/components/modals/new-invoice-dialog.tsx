@@ -37,6 +37,8 @@ interface InvoiceFormValues {
 	items: InvoiceItem[];
 	notes?: string;
 	paymentMethod: string;
+	fiscalNumber?: string;
+	healthNumber?: string;
 }
 
 interface InvoiceItem {
@@ -88,6 +90,8 @@ export function NewInvoiceDialog({
 			status: 'waiting',
 			items: [{ description: '', quantity: 1, unitPrice: 0, total: 0 }],
 			paymentMethod: '',
+			fiscalNumber: '',
+			healthNumber: '',
 		},
 	});
 
@@ -167,6 +171,8 @@ export function NewInvoiceDialog({
 				status: 'waiting',
 				items: [{ description: '', quantity: 1, unitPrice: 0, total: 0 }],
 				paymentMethod: '',
+				fiscalNumber: '',
+				healthNumber: '',
 			});
 		}
 	};
@@ -281,54 +287,7 @@ export function NewInvoiceDialog({
 				)}
 				<DialogContent className="max-w-4xl h-[90vh] overflow-hidden p-0 flex flex-col">
 					<DialogHeader className="px-6 py-4 border-b flex-shrink-0">
-						<div className="flex flex-col space-y-4">
-							<div className="flex items-center justify-between">
-								<div>
-									<div className="text-sm font-medium text-muted-foreground mb-1">
-										Invoice #{form.watch('number')}
-									</div>
-									<DialogTitle className="text-2xl">
-										{t('invoices.new')}
-									</DialogTitle>
-								</div>
-							</div>
-							<div className="flex items-center justify-between">
-								<div className="text-sm text-muted-foreground">
-									Issue Date: {form.watch('date')}
-								</div>
-								<FormField
-									control={form.control}
-									name="status"
-									render={({ field }) => (
-										<Select value={field.value} onValueChange={field.onChange}>
-											<SelectTrigger className="w-[150px]">
-												<SelectValue>
-													{t(
-														`invoices.status${
-															status.charAt(0).toUpperCase() + status.slice(1)
-														}`
-													)}
-												</SelectValue>
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem value="waiting">
-													{t('invoices.statusWaiting')}
-												</SelectItem>
-												<SelectItem value="processing">
-													{t('invoices.statusProcessing')}
-												</SelectItem>
-												<SelectItem value="paid">
-													{t('invoices.statusPaid')}
-												</SelectItem>
-												<SelectItem value="cancelled">
-													{t('invoices.statusCancelled')}
-												</SelectItem>
-											</SelectContent>
-										</Select>
-									)}
-								/>
-							</div>
-						</div>
+						<DialogTitle>{t('invoices.new')}</DialogTitle>
 					</DialogHeader>
 
 					<div className="flex-1 overflow-y-auto">
@@ -338,6 +297,52 @@ export function NewInvoiceDialog({
 									onSubmit={form.handleSubmit(onSubmit)}
 									className="space-y-6"
 								>
+									<div className="flex items-center justify-between mb-4">
+										<div>
+											<div className="text-sm font-medium text-muted-foreground mb-1">
+												{t('invoices.number')} {form.watch('number')}
+											</div>
+											<div className="text-sm text-muted-foreground">
+												{t('invoices.issueDate')}: {form.watch('date')}
+											</div>
+										</div>
+										<FormField
+											control={form.control}
+											name="status"
+											render={({ field }) => (
+												<Select
+													value={field.value}
+													onValueChange={field.onChange}
+												>
+													<SelectTrigger className="w-[150px]">
+														<SelectValue>
+															{t(
+																`invoices.status${
+																	status.charAt(0).toUpperCase() +
+																	status.slice(1)
+																}`
+															)}
+														</SelectValue>
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="waiting">
+															{t('invoices.statusWaiting')}
+														</SelectItem>
+														<SelectItem value="processing">
+															{t('invoices.statusProcessing')}
+														</SelectItem>
+														<SelectItem value="paid">
+															{t('invoices.statusPaid')}
+														</SelectItem>
+														<SelectItem value="cancelled">
+															{t('invoices.statusCancelled')}
+														</SelectItem>
+													</SelectContent>
+												</Select>
+											)}
+										/>
+									</div>
+
 									<div className="grid grid-cols-2 gap-4">
 										<PatientDropdown />
 										<FormField
@@ -355,9 +360,50 @@ export function NewInvoiceDialog({
 										/>
 									</div>
 
+									<div className="grid grid-cols-2 gap-4">
+										<FormField
+											control={form.control}
+											name="fiscalNumber"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														{t('invoices.fiscalNumberAbbr')}
+													</FormLabel>
+													<FormControl>
+														<Input
+															placeholder={t('invoices.fiscalNumberAbbr')}
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name="healthNumber"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>
+														{t('invoices.healthNumberAbbr')}
+													</FormLabel>
+													<FormControl>
+														<Input
+															placeholder={t('invoices.healthNumberAbbr')}
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+
 									<div className="space-y-4">
 										<div className="flex items-center justify-between">
-											<h3 className="font-semibold">Items</h3>
+											<h3 className="font-semibold">
+												{t('invoices.items.description')}
+											</h3>
 											<Button
 												type="button"
 												variant="outline"
@@ -365,7 +411,7 @@ export function NewInvoiceDialog({
 												onClick={addItem}
 											>
 												<Plus className="h-4 w-4 mr-2" />
-												Add Item
+												{t('common.new')}
 											</Button>
 										</div>
 
@@ -373,10 +419,18 @@ export function NewInvoiceDialog({
 											<table className="w-full">
 												<thead>
 													<tr className="border-b">
-														<th className="text-left p-4">Description</th>
-														<th className="text-right p-4">Quantity</th>
-														<th className="text-right p-4">Unit Price</th>
-														<th className="text-right p-4">Total</th>
+														<th className="text-left p-4">
+															{t('invoices.items.description')}
+														</th>
+														<th className="text-right p-4">
+															{t('invoices.items.quantity')}
+														</th>
+														<th className="text-right p-4">
+															{t('invoices.items.unitPrice')}
+														</th>
+														<th className="text-right p-4">
+															{t('invoices.items.total')}
+														</th>
 														<th className="w-16 p-4"></th>
 													</tr>
 												</thead>
@@ -385,7 +439,7 @@ export function NewInvoiceDialog({
 														<tr key={index} className="border-b last:border-0">
 															<td className="p-4">
 																<Input
-																	placeholder="Item description"
+																	placeholder={t('invoices.items.description')}
 																	value={item.description}
 																	onChange={(e) => {
 																		const items = form.getValues('items');
@@ -446,7 +500,7 @@ export function NewInvoiceDialog({
 										<div className="flex justify-end">
 											<div className="w-72">
 												<div className="flex justify-between font-bold">
-													<span>Total</span>
+													<span>{t('invoices.total')}</span>
 													<span>{formatCurrency(calculateTotal(items))}</span>
 												</div>
 											</div>

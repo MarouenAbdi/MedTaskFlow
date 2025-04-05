@@ -195,7 +195,29 @@
 		"filterByStatus": "Filtrer par statut",
 		"filterByDate": "Filtrer par date",
 		"selectDateRange": "Sélectionner la période",
-		"statusAll": "Tous les statuts"
+		"statusAll": "Tous les statuts",
+		"generateInvoice": "Générer la facture",
+		"generateSuccess": "Facture générée avec succès",
+		"generateError": "Erreur lors de la génération de la facture",
+		"selectAll": "Sélectionner toutes les factures",
+		"selectInvoice": "Sélectionner la facture {{number}}",
+		"downloadSelected": "Télécharger ({{count}})",
+		"printSelected": "Imprimer ({{count}})",
+		"bulkDownloadStarted": "Début du téléchargement des factures : {{invoices}}",
+		"bulkPrintStarted": "Début de l'impression des factures : {{invoices}}",
+		"details": "Détails de la facture",
+		"issueDate": "Date d'émission",
+		"subtotal": "Sous-total",
+		"tax": "TVA",
+		"total": "Total",
+		"fiscalNumberAbbr": "NIF",
+		"healthNumberAbbr": "NSS",
+		"items": {
+			"description": "Description",
+			"quantity": "Quantité",
+			"unitPrice": "Prix unitaire",
+			"total": "Total"
+		}
 	},
 	"common": {
 		"new": "Nouveau",

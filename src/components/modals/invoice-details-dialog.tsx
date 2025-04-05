@@ -38,6 +38,8 @@ interface Invoice {
 	total: number;
 	notes?: string;
 	paymentMethod?: string;
+	fiscalNumber?: string;
+	healthNumber?: string;
 }
 
 interface InvoiceDetailsDialogProps {
@@ -55,6 +57,13 @@ export function InvoiceDetailsDialog({
 }: InvoiceDetailsDialogProps) {
 	const { t } = useTranslation();
 	const [isExporting, setIsExporting] = useState(false);
+
+	// Function to generate random number for demo purposes
+	const generateRandomNumber = (length: number) => {
+		return Array.from({ length }, () => Math.floor(Math.random() * 10)).join(
+			''
+		);
+	};
 
 	const formatDate = (dateString: string) => {
 		return format(new Date(dateString), 'MMMM d, yyyy');
@@ -114,7 +123,7 @@ export function InvoiceDetailsDialog({
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-4xl h-[90vh] overflow-hidden p-0 flex flex-col">
 				<DialogHeader className="px-6 py-4 border-b flex-shrink-0">
-					<DialogTitle>Invoice Details</DialogTitle>
+					<DialogTitle>{t('invoices.details')}</DialogTitle>
 				</DialogHeader>
 
 				<div className="flex-1 overflow-y-auto px-6 py-4">
@@ -123,13 +132,22 @@ export function InvoiceDetailsDialog({
 							<div>
 								<h2 className="text-2xl font-semibold">{invoice.patient}</h2>
 								<div className="text-sm font-medium text-muted-foreground">
-									Invoice #{invoice.number}
+									{t('invoices.number')} {invoice.number}
+								</div>
+								<div className="text-sm font-medium text-muted-foreground mt-1">
+									{t('invoices.fiscalNumberAbbr')}:{' '}
+									{invoice.fiscalNumber || generateRandomNumber(9)}
+								</div>
+								<div className="text-sm font-medium text-muted-foreground">
+									{t('invoices.healthNumberAbbr')}:{' '}
+									{invoice.healthNumber || generateRandomNumber(10)}
 								</div>
 							</div>
 						</div>
+
 						<div className="flex items-center justify-between">
 							<div className="text-sm text-muted-foreground">
-								Issue Date: {formatDate(invoice.date)}
+								{t('invoices.issueDate')}: {formatDate(invoice.date)}
 							</div>
 							<div className="flex items-center gap-4">
 								<Select
@@ -212,10 +230,18 @@ export function InvoiceDetailsDialog({
 							<table className="w-full">
 								<thead>
 									<tr className="border-b">
-										<th className="text-left p-4">Description</th>
-										<th className="text-right p-4">Quantity</th>
-										<th className="text-right p-4">Unit Price</th>
-										<th className="text-right p-4">Total</th>
+										<th className="text-left p-4">
+											{t('invoices.items.description')}
+										</th>
+										<th className="text-right p-4">
+											{t('invoices.items.quantity')}
+										</th>
+										<th className="text-right p-4">
+											{t('invoices.items.unitPrice')}
+										</th>
+										<th className="text-right p-4">
+											{t('invoices.items.total')}
+										</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -238,16 +264,20 @@ export function InvoiceDetailsDialog({
 						<div className="flex justify-end">
 							<div className="w-72 space-y-2">
 								<div className="flex justify-between">
-									<span className="text-muted-foreground">Subtotal</span>
+									<span className="text-muted-foreground">
+										{t('invoices.subtotal')}
+									</span>
 									<span>{formatCurrency(invoice.subtotal)}</span>
 								</div>
 								<div className="flex justify-between">
-									<span className="text-muted-foreground">Tax</span>
+									<span className="text-muted-foreground">
+										{t('invoices.tax')}
+									</span>
 									<span>{formatCurrency(invoice.tax)}</span>
 								</div>
 								<Separator />
 								<div className="flex justify-between font-bold">
-									<span>Total</span>
+									<span>{t('invoices.total')}</span>
 									<span>{formatCurrency(invoice.total)}</span>
 								</div>
 							</div>
@@ -259,7 +289,9 @@ export function InvoiceDetailsDialog({
 								<div className="space-y-4">
 									{invoice.paymentMethod && (
 										<div>
-											<h4 className="font-medium mb-1">Payment Method</h4>
+											<h4 className="font-medium mb-1">
+												{t('invoices.paymentMethod')}
+											</h4>
 											<p className="text-muted-foreground">
 												{invoice.paymentMethod}
 											</p>
@@ -267,7 +299,7 @@ export function InvoiceDetailsDialog({
 									)}
 									{invoice.notes && (
 										<div>
-											<h4 className="font-medium mb-1">Notes</h4>
+											<h4 className="font-medium mb-1">{t('common.notes')}</h4>
 											<p className="text-muted-foreground">{invoice.notes}</p>
 										</div>
 									)}
