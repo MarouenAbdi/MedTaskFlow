@@ -11,8 +11,8 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { NewPatientDialog } from '@/components/modals/new-patient-dialog';
-import { PatientDetailsDialog } from '@/components/modals/patient-details-dialog';
+import { NewPatientDialog } from '@/modals/new-patient-dialog';
+import { PatientDetailsDialog } from '@/modals/patient-details-dialog';
 import { User, Search, ArrowUpDown, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -23,9 +23,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { Patient } from '@/types/patient';
 
 // Dummy patient data with a mix of profile pictures and default avatars
-const initialPatients = [
+const initialPatients: Patient[] = [
 	{
 		id: 1,
 		name: 'John Doe',
@@ -102,10 +103,8 @@ const initialPatients = [
 
 export function Patients() {
 	const { t } = useTranslation();
-	const [patients, setPatients] = useState(initialPatients);
-	const [selectedPatient, setSelectedPatient] = useState<
-		(typeof patients)[0] | null
-	>(null);
+	const [patients, setPatients] = useState<Patient[]>(initialPatients);
+	const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 	const [detailsOpen, setDetailsOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -151,7 +150,7 @@ export function Patients() {
 			});
 	}, [patients, searchQuery, statusFilter, ageFilter, sortOrder]);
 
-	const handleRowClick = (patient: (typeof patients)[0]) => {
+	const handleRowClick = (patient: Patient) => {
 		setSelectedPatient({ ...patient });
 		setDetailsOpen(true);
 	};
@@ -172,7 +171,7 @@ export function Patients() {
 		toast.success(`Patient status updated to ${newStatus}`);
 	};
 
-	const handleSavePatient = (updatedPatient: (typeof patients)[0]) => {
+	const handleSavePatient = (updatedPatient: Patient) => {
 		setPatients((prevPatients) =>
 			prevPatients.map((patient) =>
 				patient.id === updatedPatient.id ? updatedPatient : patient

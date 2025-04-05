@@ -42,21 +42,7 @@ import {
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Separator } from '@/components/ui/separator';
-
-interface Patient {
-	id: number;
-	name: string;
-	avatar?: string;
-	age: number;
-	contact: string;
-	lastVisit: string;
-	status: string;
-	email?: string;
-	dateOfBirth?: string;
-	gender?: string;
-	address?: string;
-	notes?: string;
-}
+import { Patient } from '@/types/patient';
 
 interface PatientDetailsDialogProps {
 	patient: Patient;

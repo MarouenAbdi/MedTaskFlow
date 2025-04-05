@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { UserAuthForm } from '@/components/user-auth-form';
-import { LanguageSelector } from '@/components/language-selector';
-import { WhiteLogo } from '@/components/white-logo';
+import { UserAuthForm } from '@/components/CustomComponents/user-auth-form';
+import { LanguageSelector } from '@/components/CustomComponents/language-selector';
+import { WhiteLogo } from '@/components/CustomComponents/white-logo';
 import { Separator } from '@/components/ui/separator';
 
 export function Login() {

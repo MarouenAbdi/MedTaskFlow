@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { UserSignUpForm } from '@/components/user-signup-form';
-import { LanguageSelector } from '@/components/language-selector';
-import { WhiteLogo } from '@/components/white-logo';
+import { UserSignUpForm } from '@/components/CustomComponents/user-signup-form';
+import { LanguageSelector } from '@/components/CustomComponents/language-selector';
+import { WhiteLogo } from '@/components/CustomComponents/white-logo';
 import { Separator } from '@/components/ui/separator';
 
 export function SignUp() {

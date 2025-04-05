@@ -8,7 +8,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
-import { SessionRecorder } from '@/components/session-recorder';
+import { SessionRecorder } from '@/components/CustomComponents/session-recorder';
 import { RichTextEditorModal } from './rich-text-editor-modal';
 import { FileText, Save, Copy, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';

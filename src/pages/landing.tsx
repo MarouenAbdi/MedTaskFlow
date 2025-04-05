@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { Button } from '@/components/ui/button';
-import { Logo } from '@/components/logo';
+import { Logo } from '@/components/CustomComponents/logo';
 import {
 	CheckCircle2,
 	ArrowRight,

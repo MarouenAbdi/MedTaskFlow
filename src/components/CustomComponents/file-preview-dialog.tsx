@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -6,9 +6,16 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Download, ZoomIn, ZoomOut, RotateCw, AlertCircle } from 'lucide-react';
+import {
+	X,
+	Download,
+	ZoomIn,
+	ZoomOut,
+	RotateCw,
+	AlertCircle,
+} from 'lucide-react';
 import { toast } from 'sonner';
-import { PDFViewer } from '@/components/pdf-viewer';
+import { PDFViewer } from '@/components/CustomComponents/pdf-viewer';
 
 interface FilePreviewDialogProps {
 	file: {
@@ -19,7 +26,6 @@ interface FilePreviewDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	onDownload?: (fileName: string) => void;
-	filePreview?: string;
 }
 
 export function FilePreviewDialog({
@@ -27,7 +33,6 @@ export function FilePreviewDialog({
 	open,
 	onOpenChange,
 	onDownload,
-	filePreview,
 }: FilePreviewDialogProps) {
 	const [zoom, setZoom] = useState(1);
 	const [rotation, setRotation] = useState(0);
@@ -35,18 +40,31 @@ export function FilePreviewDialog({
 	const isPdf = file.type === 'pdf';
 	const isImage = file.type === 'image';
 
+	// Reset zoom and rotation when the file changes or dialog opens
+	useEffect(() => {
+		if (open) {
+			setZoom(1);
+			setRotation(0);
+		}
+	}, [open, file.url]);
+
 	const handleDownload = () => {
 		if (onDownload) {
 			onDownload(file.name);
 		} else {
-			// Fallback download method
-			const link = document.createElement('a');
-			link.href = file.url;
-			link.download = file.name;
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
-			toast.success(`Downloading ${file.name}`);
+			try {
+				// Fallback download method
+				const link = document.createElement('a');
+				link.href = file.url;
+				link.download = file.name;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				toast.success(`Downloading ${file.name}`);
+			} catch (error) {
+				console.error('Download error:', error);
+				toast.error('Failed to download file');
+			}
 		}
 	};
 
@@ -64,27 +82,38 @@ export function FilePreviewDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-5xl h-[90vh] p-0 flex flex-col">
-				<DialogHeader className="px-6 py-4 border-b flex-shrink-0">
-					<div className="flex items-center justify-between gap-2">
+			<DialogContent className="max-w-5xl h-[90vh] overflow-hidden p-0">
+				<DialogHeader className="px-6 py-4 border-b">
+					<div className="flex items-center justify-between">
 						<DialogTitle className="truncate max-w-md">{file.name}</DialogTitle>
+						<div className="flex items-center gap-2">
+							<Button variant="ghost" size="icon" onClick={handleDownload}>
+								<Download className="h-4 w-4" />
+							</Button>
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => onOpenChange(false)}
+							>
+								<X className="h-4 w-4" />
+							</Button>
+						</div>
 					</div>
 				</DialogHeader>
 
-				<div className="flex-1 overflow-auto bg-muted/30 flex flex-col">
+				<div className="flex-1 overflow-hidden bg-muted/30 h-[calc(90vh-4rem)]">
 					{isPdf ? (
 						<PDFViewer
 							url={file.url}
 							fileName={file.name}
 							onDownload={handleDownload}
-							hideToolbar={true}
 						/>
 					) : isImage ? (
 						<div className="flex flex-col h-full">
 							<div className="flex-1 flex items-center justify-center p-4 overflow-auto">
 								<div className="relative flex items-center justify-center h-full w-full">
 									<img
-										src={filePreview || file.url}
+										src={file.url}
 										alt={file.name}
 										className="max-h-full max-w-full object-contain transition-all duration-200"
 										style={{

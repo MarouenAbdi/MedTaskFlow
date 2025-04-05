@@ -9,8 +9,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { NewMedicalRecordDialog } from '@/components/modals/new-medical-record-dialog';
-import { MedicalRecordDetailsDialog } from '@/components/modals/medical-record-details-dialog';
+import { NewMedicalRecordDialog } from '@/modals/new-medical-record-dialog';
+import { MedicalRecordDetailsDialog } from '@/modals/medical-record-details-dialog';
 import { Badge } from '@/components/ui/badge';
 import { cn, typeVariants } from '@/lib/utils';
 import {

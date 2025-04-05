@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/components/theme-provider';
+import { useTheme } from '@/components/CustomComponents/theme-provider';
 import { useLanguage } from '@/lib/contexts/language-context';
 import {
 	Laptop,

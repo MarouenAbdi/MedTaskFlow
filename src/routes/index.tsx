@@ -1,17 +1,17 @@
 import { BrowserRouter, Route, Routes as RouterRoutes } from 'react-router-dom';
-import { Layout } from '@/components/layout';
+import { Layout } from '@/components/CustomComponents/layout';
 import { Landing } from '@/pages/landing';
-import { Dashboard } from '@/pages/dashboard';
-import { Appointments } from '@/pages/appointments';
+import Dashboard from '@/pages/dashboard';
+import Appointments from '@/pages/appointments';
 import { Patients } from '@/pages/patients';
 import { MedicalRecords } from '@/pages/medical-records';
-import { Invoices } from '@/pages/invoices';
+import Invoices from '@/pages/invoices';
 import { Login } from '@/pages/login';
 import { SignUp } from '@/pages/signup';
 import { Payment } from '@/pages/payment';
 import { Pricing } from '@/pages/pricing';
 import { ManageSubscription } from '@/pages/manage-subscription';
-import { AiAssistants } from '@/pages/ai-assistants';
+import AiAssistants from '@/pages/ai-assistants';
 
 export function Routes() {
 	return (

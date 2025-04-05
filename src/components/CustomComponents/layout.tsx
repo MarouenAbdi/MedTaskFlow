@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './sidebar';
-import { Sheet, SheetContent } from './ui/sheet';
-import { Button } from './ui/button';
+import { Sheet, SheetContent } from '../ui/sheet';
+import { Button } from '../ui/button';
 import { Menu } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { ScrollArea } from './ui/scroll-area';
+import { cn } from '../../lib/utils';
+import { ScrollArea } from '../ui/scroll-area';
 
 export function Layout() {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);

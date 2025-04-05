@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -35,8 +34,7 @@ import {
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-interface Appointment {
-	id: number;
+interface AppointmentFormValues {
 	patient: string;
 	type: string;
 	time: string;
@@ -44,10 +42,10 @@ interface Appointment {
 }
 
 interface EditAppointmentDialogProps {
-	appointment: Appointment;
+	appointment: AppointmentFormValues & { id: number };
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	onSave: (appointment: Appointment) => void;
+	onSave: (appointment: AppointmentFormValues & { id: number }) => void;
 	onDelete: (id: number) => void;
 }
 
@@ -58,7 +56,6 @@ export function EditAppointmentDialog({
 	onSave,
 	onDelete,
 }: EditAppointmentDialogProps) {
-	const { t } = useTranslation();
 	const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 	const form = useForm({
 		defaultValues: {
@@ -66,8 +63,8 @@ export function EditAppointmentDialog({
 		},
 	});
 
-	function onSubmit(data: any) {
-		onSave({ ...appointment, ...data });
+	function onSubmit(data: AppointmentFormValues) {
+		onSave({ id: appointment.id, ...data });
 		onOpenChange(false);
 	}
 

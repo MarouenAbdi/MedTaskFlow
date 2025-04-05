@@ -12,10 +12,10 @@ import {
 	LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
-import { ScrollArea } from './ui/scroll-area';
+import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
 import { NotificationsMenu } from './notifications-menu';
-import { SettingsDialog } from './modals/settings-dialog';
+import { SettingsDialog } from '../../modals/settings-dialog';
 
 interface SidebarProps {
 	isCollapsed: boolean;
